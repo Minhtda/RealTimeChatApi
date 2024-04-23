@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Application.ViewModel;
+using AutoMapper;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,11 @@ namespace Infrastructure.Mappers
     {
         public MapperConfig()
         {
+            CreateUserMap();
         }
-
+        internal void CreateUserMap()
+        {
+            CreateMap<RegisterModel,User>().ReverseMap();
+        }
     }
 }

@@ -1,5 +1,6 @@
 using Application.Common;
 using Infrastructure;
+using Infrastructure.Mappers;
 using MobileAPI;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureService(configuration!.DatabaseConnectionString, configuration!.CacheConnectionString);
 builder.Services.AddMobileAPIService(configuration!.JWTSecretKey);
+builder.Services.AddAutoMapper(typeof(MapperConfig));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

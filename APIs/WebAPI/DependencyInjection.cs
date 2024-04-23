@@ -1,19 +1,19 @@
 ﻿using Application.InterfaceService;
+using Application.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using MobileAPI.MobileService;
-using Application.Service;
-namespace MobileAPI
+using WebAPI.WebService;
+
+namespace WebAPI
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddMobileAPIService(this IServiceCollection services,string secretKey) 
+        public static IServiceCollection AddWebAPIService(this IServiceCollection services, string secretKey)
         {
             services.AddHttpContextAccessor();
-            services.AddScoped<IClaimService, ClaimService>();
+            services.AddScoped<IClaimService,ClaimService>();
             services.AddScoped<ICurrentTime, CurrentTime>();
-            services.AddScoped<IUserService, UserService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options =>
               {
@@ -29,7 +29,6 @@ namespace MobileAPI
                       ClockSkew = TimeSpan.FromSeconds(1)
                   };
               });
-           
             return services;
         }
     }

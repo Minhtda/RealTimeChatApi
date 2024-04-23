@@ -28,21 +28,16 @@ services:
       context: .
       dockerfile: APIs/MobileAPI/Dockerfile
     ports:
-        - 8002:80  
+        - 8024:80  
     networks:
       - capstone-api-network
-    depends_on:
-      - capstonedb
-      - cachedb
  webapi:
     image: ${DOCKER_REGISTRY-}webapi
     build:
       context: .
       dockerfile: APIs/WebAPI/Dockerfile
     ports:
-        - 8003:80  
+        - 7024:80  
     networks:
       - capstone-api-network
-    depends_on:
-      - capstonedb
-      - cachedb
+   

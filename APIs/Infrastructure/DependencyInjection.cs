@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Application;
+using Application.InterfaceRepository;
+using Application.InterfaceService;
+using Infrastructure.Repository;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using System;
@@ -19,6 +23,8 @@ namespace Infrastructure
                 IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect(cacheConnectionString);
                 return multiplexer.GetDatabase();
             });
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;    
         }
     }
