@@ -29,6 +29,7 @@ services:
       dockerfile: APIs/MobileAPI/Dockerfile
     ports:
         - 8024:80  
+        - 7777:443  
     networks:
       - capstone-api-network
  webapi:
@@ -38,6 +39,7 @@ services:
       dockerfile: APIs/WebAPI/Dockerfile
     ports:
         - 7024:80  
+        - 9999:443
     networks:
       - capstone-api-network
    
