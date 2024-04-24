@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.InterfaceRepository;
+using Infrastructure.Cache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,17 @@ namespace Infrastructure
     {
         private readonly AppDbContext _dbContext;
         private readonly IUserRepository _userRepository;
-        public UnitOfWork(IUserRepository userRepository, AppDbContext dbContext)
+        private readonly ICacheRepository _cacheRepository;
+        public UnitOfWork(IUserRepository userRepository, AppDbContext dbContext, ICacheRepository cacheRepository)
         {
             _userRepository = userRepository;
             _dbContext = dbContext;
+            _cacheRepository = cacheRepository;
         }
 
         public IUserRepository UserRepository =>_userRepository;
+
+        public ICacheRepository CacheRepository =>_cacheRepository;
 
         public Task<int> SaveChangeAsync()
         {

@@ -14,6 +14,7 @@ namespace WebAPI
             services.AddHttpContextAccessor();
             services.AddScoped<IClaimService,ClaimService>();
             services.AddScoped<ICurrentTime, CurrentTime>();
+            services.AddScoped<IUserService, UserService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options =>
               {

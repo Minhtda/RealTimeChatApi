@@ -1,6 +1,6 @@
 ﻿using Application.InterfaceService;
 using Application.Service;
-using Application.ViewModel;
+using Application.ViewModel.UserViewModel;
 using AutoFixture;
 using Backend.Domain.Test;
 using Domain.Entities;

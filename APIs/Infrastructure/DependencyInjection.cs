@@ -1,6 +1,7 @@
 ﻿using Application;
 using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Infrastructure.Cache;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,7 @@ namespace Infrastructure
                 return multiplexer.GetDatabase();
             });
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICacheRepository,CacheRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;    
         }

@@ -3,20 +3,19 @@ using Application.ViewModel.UserViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MobileAPI.Controllers
+namespace WebAPI.Controllers
 {
-
-    public class UserController :BaseController
+    public class WebUserController : BaseController
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        public WebUserController(IUserService userService)
         {
             _userService = userService;
         }
         [HttpPost]
-        public async Task<IActionResult>Register (RegisterModel registerModel)
+        public async Task<IActionResult> Register(RegisterModel registerModel)
         {
-            var isCreate=await _userService.CreateAccount(registerModel);
+            var isCreate = await _userService.CreateAccount(registerModel);
             if (!isCreate)
             {
                 return BadRequest();
@@ -24,12 +23,11 @@ namespace MobileAPI.Controllers
             return Ok();
         }
         [HttpPost]
-        public async Task<IActionResult> Login(LoginModel loginModel) 
+        public async Task<IActionResult> Login(LoginModel loginModel)
         {
-            string apiOrigin = "Mobile";
-            var newToken=await _userService.Login(loginModel, apiOrigin);
+            string apiOrigin = "Web";
+            var newToken = await _userService.Login(loginModel,apiOrigin);
             return Ok(newToken);
         }
-
     }
 }

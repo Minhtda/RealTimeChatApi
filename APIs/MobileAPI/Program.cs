@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureService(configuration!.DatabaseConnectionString, configuration!.CacheConnectionString);
 builder.Services.AddMobileAPIService(configuration!.JWTSecretKey);
 builder.Services.AddAutoMapper(typeof(MapperConfig));
+builder.Services.AddSingleton(configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

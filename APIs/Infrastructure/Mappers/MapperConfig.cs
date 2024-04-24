@@ -1,4 +1,4 @@
-﻿using Application.ViewModel;
+﻿using Application.ViewModel.UserViewModel;
 using AutoMapper;
 using Domain.Entities;
 using System;

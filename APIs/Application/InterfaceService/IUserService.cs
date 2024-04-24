@@ -1,4 +1,4 @@
-﻿using Application.ViewModel;
+﻿using Application.ViewModel.UserViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +10,6 @@ namespace Application.InterfaceService
     public interface IUserService
     {
         Task<bool> CreateAccount(RegisterModel registerModel);
+        Task<Token> Login (LoginModel loginModel,string apiOrigin);
     }
 }

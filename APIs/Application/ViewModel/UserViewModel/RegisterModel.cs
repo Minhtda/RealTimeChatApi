@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.ViewModel
+namespace Application.ViewModel.UserViewModel
 {
     public class RegisterModel
     {

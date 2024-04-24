@@ -22,8 +22,8 @@ namespace Infrastructure.Repository
 
         public async Task<User> FindUserByEmail(string email)
         {
-          User user= await _dbContext.Users.FirstOrDefaultAsync(x=>x.Email==email);
-            return user;
+          User user= await _dbContext.Users.Include(x=>x.Role).FirstOrDefaultAsync(x=>x.Email==email);
+          return user;
         }
     }
 }
