@@ -18,10 +18,12 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructureService(this IServiceCollection services,string databaseConnectionString,string cacheConnectionString)
         {
+            var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...
+            options.Password = "MinhQuan@123";
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(databaseConnectionString).EnableSensitiveDataLogging());
             services.AddScoped<IDatabase>(cfg =>
             {
-                IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect(cacheConnectionString);
+                IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect(options);
                 return multiplexer.GetDatabase();
             });
             services.AddScoped<IUserRepository, UserRepository>();

@@ -60,7 +60,7 @@ namespace Application.Service
                 throw new Exception("Password is not correct");
             }
             var findKey = $"{user.Id.ToString()}+{apiOrigin}";
-            var loginData = _unitOfWork.CacheRepository.GetData<string>(findKey);
+           string? loginData = _unitOfWork.CacheRepository.GetData<string>(findKey);
             if (loginData!=null)
             {
                 throw new Exception("You already login");

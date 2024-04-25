@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Backend.Infratructure.Test.RepositoryTest
 {
-    public class UserRepositoryTest:SetupTest
+    public class UserRepositoryTest : SetupTest
     {
         private readonly IUserRepository _userRepository;
         public UserRepositoryTest()
@@ -27,11 +27,11 @@ namespace Backend.Infratructure.Test.RepositoryTest
         public async Task CheckEmailExisted_ShouldReturnTrue()
         {
             var mockUserData = _fixture.Build<User>().Create();
-            await _dbContext.AddAsync( mockUserData );
+            await _dbContext.AddAsync(mockUserData);
             await _dbContext.SaveChangesAsync();
-          var user =await _userRepository.FindUserByEmail(mockUserData.Email);
-            Assert.True( user != null );    
-            user.Id.Should().Be( mockUserData.Id ); 
+            var user = await _userRepository.FindUserByEmail(mockUserData.Email);
+            Assert.True(user != null);
+            user.Id.Should().Be(mockUserData.Id);
         }
     }
 }

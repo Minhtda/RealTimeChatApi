@@ -3,6 +3,7 @@ using Application.InterfaceService;
 using Backend.Domain.Test;
 using FluentAssertions;
 using Infrastructure;
+using Infrastructure.Cache;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +24,7 @@ namespace Backend.Infratructure.Test
         public DependencyInjectionTest()
         {
             var service=new ServiceCollection();
-            service.AddInfrastructureService("Testing","TestCache");
+            service.AddInfrastructureService("Testing", "localhost:6379");
             service.AddDbContext<AppDbContext>(
                option => option.UseInMemoryDatabase("test"));
             service.AddMobileAPIService("Test");
@@ -34,7 +35,9 @@ namespace Backend.Infratructure.Test
         public void GetService_ShouldRetunCorrectType()
         {
             var userRepositoryResolved = _serviceProvider.GetRequiredService<IUserRepository>();
+            var cacheRepositoryResolved = _serviceProvider.GetRequiredService<ICacheRepository>();
             userRepositoryResolved.GetType().Should().Be(typeof(UserRepository));
+            cacheRepositoryResolved.GetType().Should().Be(typeof(CacheRepository)); 
         }
     }
 }

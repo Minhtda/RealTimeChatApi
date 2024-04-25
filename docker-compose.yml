@@ -17,11 +17,14 @@ services:
       container_name: cachedb
       image: redis:latest
       volumes:
-        - "./RedisConfig:/usr/local/etc/redis.conf"
-      expose:
-         - "6379"
+        - "./MobileAPI/RedisConfig:/usr/local/etc/redis"
+      ports:
+         - 6379:6379
       networks :
         - capstone-api-network
+      environment:
+         - REDIS_PASSWORD=MinhQuan@123
+      command: /bin/sh -c "redis-server --requirepass MinhQuan@123"
  mobileapi:
     image: ${DOCKER_REGISTRY-}mobileapi
     build:

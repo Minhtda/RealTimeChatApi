@@ -1,9 +1,11 @@
 ﻿using Application;
+using Application.Common;
 using Application.InterfaceRepository;
 using Application.InterfaceService;
 using AutoFixture;
 using AutoMapper;
 using Infrastructure;
+using Infrastructure.Cache;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -23,6 +25,8 @@ namespace Backend.Domain.Test
         protected readonly Mock<IClaimService> _claimServiceMock;
         protected readonly Mock<IUnitOfWork> _unitOfWorkMock;
         protected readonly Mock<ICurrentTime> _currentTimeMock;
+        protected readonly Mock<ICacheRepository> _cacheRepositoryMock;
+        protected readonly Mock<AppConfiguration> _appConfiguration;
         public SetupTest()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName:Guid.NewGuid().ToString())
@@ -41,6 +45,8 @@ namespace Backend.Domain.Test
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _claimServiceMock = new Mock<IClaimService>();
             _currentTimeMock=new Mock<ICurrentTime>();
+            _cacheRepositoryMock=new Mock<ICacheRepository>();
+            _appConfiguration = new Mock<AppConfiguration>();
             _claimServiceMock.Setup(x => x.GetCurrentUserId).Returns(Guid.Empty);
             _currentTimeMock.Setup(x=>x.GetCurrentTime()).Returns(DateTime.UtcNow);
         }
