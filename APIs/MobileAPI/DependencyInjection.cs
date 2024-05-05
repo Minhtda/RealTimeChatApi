@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MobileAPI.MobileService;
 using Application.Service;
+using Application.ZaloPay.Config;
+using Microsoft.Extensions.DependencyInjection;
 namespace MobileAPI
 {
     public static class DependencyInjection
@@ -14,6 +16,7 @@ namespace MobileAPI
             services.AddScoped<IClaimService, ClaimService>();
             services.AddScoped<ICurrentTime, CurrentTime>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPaymentService, PaymentService>();  
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options =>
               {

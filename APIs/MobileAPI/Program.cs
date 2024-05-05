@@ -1,6 +1,8 @@
 using Application.Common;
+using Application.ZaloPay.Config;
 using Infrastructure;
 using Infrastructure.Mappers;
+using Microsoft.Extensions.DependencyInjection;
 using MobileAPI;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,7 @@ builder.Services.AddInfrastructureService(configuration!.DatabaseConnectionStrin
 builder.Services.AddMobileAPIService(configuration!.JWTSecretKey);
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddSingleton(configuration);
+builder.Services.Configure<ZaloPayConfig>(builder.Configuration.GetSection(ZaloPayConfig.ConfigName));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

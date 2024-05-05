@@ -2,6 +2,7 @@ using Application.Common;
 using WebAPI;
 using Infrastructure;
 using Infrastructure.Mappers;
+using Application.ZaloPay.Config;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton(configuration);
+builder.Services.Configure<ZaloPayConfig>(builder.Configuration.GetSection(ZaloPayConfig.ConfigName));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
