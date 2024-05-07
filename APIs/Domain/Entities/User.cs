@@ -16,7 +16,15 @@ namespace Domain.Entities
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public DateTime BirthDay { get; set; }
+        public bool IsBuisnessAccount { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }
+        public Guid WalletId { get; set; }
+        public Wallet Wallet { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Message> SenderMessages { get; set; }
+        public ICollection<Message> ReceiverMessages { get; set; }
+        public ICollection<Rating> Raters {  get; set; }
+        public ICollection<Rating> RatedUsers { get; set; }
     }
 }
