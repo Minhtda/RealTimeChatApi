@@ -11,5 +11,8 @@ namespace Application.InterfaceService
     {
         Task<bool> CreateAccount(RegisterModel registerModel);
         Task<Token> Login (LoginModel loginModel,string apiOrigin);
+        Task<bool> SendVerificationCodeToEmail(string email);
+        bool CheckVerifyCode(string key);
+        Task<bool> ResetPassword(string code,ResetPasswordModel resetPasswordModel);
     }
 }

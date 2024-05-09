@@ -17,7 +17,7 @@ services:
       container_name: cachedb
       image: redis:latest
       volumes:
-        - "./MobileAPI/RedisConfig:/usr/local/etc/redis"
+        - "./APIs/MobileAPI/RedisConfig:/usr/local/etc/redis"
       ports:
          - 6379:6379
       networks :
@@ -33,6 +33,8 @@ services:
     ports:
         - 8024:80  
         - 7777:443  
+    volumes:
+       - "./APIs/MobileAPI/EmailTemplate:/app/EmailTemplate"
     networks:
       - capstone-api-network
  webapi:
@@ -43,6 +45,8 @@ services:
     ports:
         - 7024:80  
         - 9999:443
+    volumes:
+      - "./APIs/WebAPI/EmailTemplate:/app/EmailTemplate"
     networks:
       - capstone-api-network
    

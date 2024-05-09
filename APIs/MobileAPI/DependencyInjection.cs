@@ -6,6 +6,7 @@ using MobileAPI.MobileService;
 using Application.Service;
 using Application.ZaloPay.Config;
 using Microsoft.Extensions.DependencyInjection;
+using Application.Util;
 namespace MobileAPI
 {
     public static class DependencyInjection
@@ -17,6 +18,9 @@ namespace MobileAPI
             services.AddScoped<ICurrentTime, CurrentTime>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPaymentService, PaymentService>();  
+            services.AddScoped<ISendMailHelper, SendMailHelper>();  
+            services.AddDistributedMemoryCache();
+            services.AddSession();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options =>
               {
