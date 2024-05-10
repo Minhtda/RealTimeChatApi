@@ -1,10 +1,12 @@
 using Application.Common;
+using Application.SchemaFilter;
 using Application.ZaloPay.Config;
 using Infrastructure;
 using Infrastructure.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using MobileAPI;
+using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -43,6 +45,10 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
                 new string[]{}
             }
      });
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    opt.IncludeXmlComments(xmlPath);
+    opt.SchemaFilter<RegisterSchemaFilter>();
 });
 var app = builder.Build();
 

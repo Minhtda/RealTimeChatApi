@@ -26,6 +26,11 @@ namespace MobileAPI.Controllers
             }
             return Ok();
         }
+        /// <summary>
+        /// Api For Login
+        /// </summary>
+        /// <param name="loginModel"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel loginModel) 
         {

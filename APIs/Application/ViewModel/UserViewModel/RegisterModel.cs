@@ -10,11 +10,12 @@ namespace Application.ViewModel.UserViewModel
     public class RegisterModel
     {
         public string Username { get; set; }
+        [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
-        public string FullName { get; set; }
-        public string BirthDay { get; set; }
+        public string Fullname { get; set; }
+        public string Birthday { get; set; }
         [RegularExpression("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$", ErrorMessage = "Please enter valid phone number.")]
-        public string PhoneNumber { get; set; }
+        public string Phonenumber { get; set; }
     }
 }

@@ -52,7 +52,7 @@ namespace Application.Service
                 throw new Exception("Email already exist");
             }
             DateTime birthDay;
-            if (!DateTime.TryParseExact(registerModel.BirthDay, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out birthDay))
+            if (!DateTime.TryParseExact(registerModel.Birthday, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out birthDay))
             {
                 throw new Exception("Invalid Birthday format. Please use 'yyyy-MM-dd' format.");
             }
@@ -60,7 +60,7 @@ namespace Application.Service
             newAccount.BirthDay= birthDay;
             newAccount.RoleId = 4;
             newAccount.PasswordHash = registerModel.Password.Hash();
-            (newAccount.FirstName, newAccount.LastName) = StringUtil.SplitName(registerModel.FullName);
+            (newAccount.FirstName, newAccount.LastName) = StringUtil.SplitName(registerModel.Fullname);
             await _unitOfWork.UserRepository.AddAsync(newAccount);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -113,6 +113,7 @@ namespace Application.Service
             {
                 user.PasswordHash = resetPasswordModel.Password.Hash();
                 _unitOfWork.UserRepository.Update(user);
+                _unitOfWork.CacheRepository.RemoveData(code);
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
