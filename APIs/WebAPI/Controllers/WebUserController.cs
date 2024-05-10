@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceService;
 using Application.ViewModel.UserViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,6 +58,18 @@ namespace WebAPI.Controllers
             HttpContext.Session.Clear();
             bool isResetSuccess = await _userService.ResetPassword(verifycode, resetPasswordModel);
             if (isResetSuccess)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            string apiOrigin = "Web";
+            bool isLogout=await _userService.Logout(apiOrigin);
+            if(isLogout)
             {
                 return Ok();
             }

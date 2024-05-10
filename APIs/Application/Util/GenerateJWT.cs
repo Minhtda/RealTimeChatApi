@@ -19,7 +19,7 @@ namespace Application.Util
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
-                new Claim("AccountId", account.Id.ToString()),
+                new Claim("userId", account.Id.ToString()),
                 new Claim(ClaimTypes.NameIdentifier ,account.UserName),
                 new Claim(ClaimTypes.Role, account.Role.RoleName),
             };

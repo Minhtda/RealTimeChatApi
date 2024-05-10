@@ -84,13 +84,21 @@ namespace Application.Service
             }
             var accessToken = user.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
             var refreshToken = RefreshToken.GetRefreshToken();
-            var key=user.Id.ToString()+ "_" +apiOrigin;
+            var key=user.Id.ToString()+ "_" + apiOrigin;
             var cacheData = _unitOfWork.CacheRepository.SetData<string>(key, refreshToken,_currentTime.GetCurrentTime().AddDays(2));
             return new Token
             {
                 accessToken = accessToken,
                 refreshToken = refreshToken,
             };
+        }
+
+        public async Task<bool> Logout(string apiOrigin)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(_claimService.GetCurrentUserId);
+            string key= user.Id.ToString()+ "_" + apiOrigin;
+            bool isDelete= (bool)_unitOfWork.CacheRepository.RemoveData(key);
+            return isDelete;
         }
 
         public async Task<bool> ResetPassword(string code, ResetPasswordModel resetPasswordModel)

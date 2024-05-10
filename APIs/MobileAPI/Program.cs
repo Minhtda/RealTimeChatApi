@@ -3,6 +3,7 @@ using Application.ZaloPay.Config;
 using Infrastructure;
 using Infrastructure.Mappers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using MobileAPI;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,32 @@ builder.Services.AddMobileAPIService(configuration!.JWTSecretKey);
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddSingleton(configuration);
 builder.Services.Configure<ZaloPayConfig>(builder.Configuration.GetSection(ZaloPayConfig.ConfigName));
+builder.Services.AddSwaggerGen(opt =>
+{
+opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+{
+    In = ParameterLocation.Header,
+    Description = "Please enter token",
+    Name = "Authorization",
+    Type = SecuritySchemeType.Http,
+    BearerFormat = "JWT",
+    Scheme = "bearer"
+});
+opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type=ReferenceType.SecurityScheme,
+                        Id="Bearer"
+                    }
+                },
+                new string[]{}
+            }
+     });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

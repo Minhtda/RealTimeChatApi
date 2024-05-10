@@ -14,5 +14,6 @@ namespace Application.InterfaceService
         Task<bool> SendVerificationCodeToEmail(string email);
         bool CheckVerifyCode(string key);
         Task<bool> ResetPassword(string code,ResetPasswordModel resetPasswordModel);
+        Task<bool> Logout(string apiOrigin);
     }
 }
