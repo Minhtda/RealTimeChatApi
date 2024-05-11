@@ -117,7 +117,6 @@ namespace Application.Service
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
-
         public async Task<bool> SendVerificationCodeToEmail(string email)
         {
             var findAccount = await _unitOfWork.UserRepository.FindUserByEmail(email);

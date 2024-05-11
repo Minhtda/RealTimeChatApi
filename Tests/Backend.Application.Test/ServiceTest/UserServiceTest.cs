@@ -11,6 +11,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,22 +27,29 @@ namespace Backend.Application.Test.ServiceTest
         [Fact]
         public async Task Register_ShouldReturnTrue()
         {
+            //Arrange
             var listUser = new List<User>();
-            var registerModel= _fixture.Build<RegisterModel>().With(x=>x.PhoneNumber,new Xeger("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$").Generate).With(x=>x.BirthDay,"2002-09-12").Create();
+            var registerModel= _fixture.Build<RegisterModel>().With(x=>x.Phonenumber,new Xeger("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$").Generate).With(x=>x.Birthday,"2002-09-12").Create();
+            //Act
             _unitOfWorkMock.Setup(um => um.UserRepository.FindAsync(u => u.UserName == registerModel.Username || u.Email == registerModel.Email)).ReturnsAsync(listUser);
             var newAccount = _mapper.Map<User>(registerModel);
             _unitOfWorkMock.Setup(um => um.UserRepository.AddAsync(newAccount)).Verifiable(); 
             _unitOfWorkMock.Setup(um=>um.SaveChangeAsync()).ReturnsAsync(1);
             bool isCreated = await _userService.CreateAccount(registerModel);
+            //Assert
             Assert.True(isCreated);
         }
         [Fact]
         public async Task Regiser_ShouldReturnException()
         {
+            //Arrange
             var listUser=_fixture.Build<User>().CreateMany(1).ToList();
-            var registerModel = _fixture.Build<RegisterModel>().With(x => x.PhoneNumber, new Xeger("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$").Generate).With(x => x.BirthDay, "2002-09-12").Create();
+            var registerModel = _fixture.Build<RegisterModel>().With(x => x.Phonenumber, new Xeger("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$").Generate)
+                .With(x => x.Birthday, "2002-09-12").Create();
+            //Act
             _unitOfWorkMock.Setup(um => um.UserRepository.FindAsync(u => u.UserName == registerModel.Username || u.Email == registerModel.Email)).ReturnsAsync(listUser);
             Func<Task> act = async () =>  await _userService.CreateAccount(registerModel);
+            //Assert
             act.Should().ThrowAsync<Exception>();
         }
         [Fact]
@@ -69,6 +77,7 @@ namespace Backend.Application.Test.ServiceTest
             var mockUser = _fixture.Build<User>().Create();
             var loginDTO = new LoginModel { Email = mockUser.Email, Password = mockUser.PasswordHash };
             mockUser.PasswordHash = mockUser.PasswordHash.Hash();
+            //Act
             _unitOfWorkMock.Setup(unit => unit.UserRepository.FindUserByEmail(mockUser.Email)).ReturnsAsync((User)null);
             _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(mockUser)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
@@ -77,6 +86,71 @@ namespace Backend.Application.Test.ServiceTest
             _appConfiguration.Object.JWTSecretKey = "Testtetsttetstetstetetstettsttxtttwtsttwtefdwqw";
             //Assert
             Assert.ThrowsAsync<Exception>(async() => await _userService.Login(loginDTO, "Mobile"));
+        }
+        [Fact]
+        public async Task VerifyCode_ShouldReturnCorrect()
+        {
+            //Arrange 
+            var code = StringUtil.RandomString(6);
+            var email = _fixture.Create<MailAddress>();
+            //Act
+            _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(email.Address);
+            bool isCorrectCode =  _userService.CheckVerifyCode(code);
+            //Assert
+            Assert.True(isCorrectCode);
+        }
+        [Fact]
+        public async Task VerifyCode_ShouldReturnError()
+        {
+            //Arrange 
+            var code = StringUtil.RandomString(6);
+            var email = _fixture.Create<MailAddress>();
+            //Act
+            _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns((string)null);
+            bool isCorrectCode = _userService.CheckVerifyCode(code);
+            //Assert
+            Assert.False(isCorrectCode);
+        }
+        [Fact]
+        public async Task ResetPassword_ShouldReturnCorrect()
+        {
+            //Arrange
+            var code =StringUtil.RandomString(6);   
+            var user= _fixture.Build<User>().Create();
+           var resetPasswordModel=_fixture.Build<ResetPasswordModel>().Without(x=>x.Password)
+                .Without(x=>x.ConfirmPassword)
+                .Do(
+                    x =>
+                    {
+                        x.Password = _fixture.Create<string>();
+                        x.ConfirmPassword = x.Password;
+                    }
+                   ).Create();
+            user.PasswordHash = resetPasswordModel.Password.Hash();
+            //Act
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.FindUserByEmail(user.Email)).ReturnsAsync(user);
+            _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(user.Email);
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(user)).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            bool isResetSuccess= await _userService.ResetPassword(code, resetPasswordModel);
+            //Assert
+            Assert.True(isResetSuccess);
+        }
+        [Fact]
+        public async Task ResetPassword_ShouldReturnException()
+        {
+            //Arrange
+            var code = StringUtil.RandomString(6);
+            var user = _fixture.Build<User>().Create();
+            var resetPasswordModel = _fixture.Build<ResetPasswordModel>().Create();
+            user.PasswordHash = resetPasswordModel.Password.Hash();
+            //Act
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.FindUserByEmail(user.Email)).ReturnsAsync(user);
+            _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(user.Email);
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(user)).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            //Assert
+            Assert.ThrowsAsync<Exception>(async () => await _userService.ResetPassword(code,resetPasswordModel));
         }
     }
 }
