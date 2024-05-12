@@ -83,5 +83,19 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
+        [HttpPost]
+        public async Task<IActionResult> LoginGoogle(string Token)
+        {
+            string apiOrigin = "Mobile";
+            var newToken = await _userService.LoginGoogle(Token, apiOrigin);
+            if(newToken == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(newToken);
+            }
+        }
     }
 }

@@ -4,11 +4,14 @@ using Application.Util;
 using Application.ViewModel.UserViewModel;
 using AutoMapper;
 using Domain.Entities;
+using Google.Apis.Auth;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -151,6 +154,50 @@ namespace Application.Service
                throw ex;
             }
             return true;
+        }
+        public async Task<Token> LoginGoogle(string token, string apiOrigin)
+        {
+            try
+            {
+                var payload = await GoogleJsonWebSignature.ValidateAsync(token);
+                string email = payload.Email;
+                string firstName = payload.GivenName;
+                string lastName = payload.FamilyName;
+                string pictureUrl = payload.Picture;
+                var loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
+                if (loginUser == null)
+                {
+                    var newAcc = new User();
+                    newAcc.Email = email;
+                    newAcc.RoleId = 3;
+                    newAcc.IsDelete = false;
+                    newAcc.UserName = firstName + " " + lastName;
+                    newAcc.FirstName = firstName;
+                    newAcc.LastName = lastName;
+                    await _unitOfWork.UserRepository.AddAsync(newAcc);
+                    await _unitOfWork.SaveChangeAsync();
+                    loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
+                }
+                var accessToken = loginUser.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
+                var refreshToken = RefreshToken.GetRefreshToken();
+                var key = loginUser.Id.ToString() + "_" + apiOrigin;
+                var cacheData = _unitOfWork.CacheRepository.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
+                return new Token
+                {
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
+                };
+            }
+            catch (InvalidJwtException ex)
+            {
+                // Token is invalid
+                throw new Exception("Invalid token", ex);
+            }
+            catch (Exception ex)
+            {
+                // Other exceptions
+                throw new Exception("Failed to validate token", ex);
+            }
         }
     }
 }
