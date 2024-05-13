@@ -24,7 +24,7 @@ namespace Backend.Infratructure.Test
         public DependencyInjectionTest()
         {
             var service=new ServiceCollection();
-            service.AddInfrastructureService("Testing", "localhost:6379");
+            service.AddInfrastructureService("Testing", "localhost:6379;password:MinhQuan@123");
             service.AddDbContext<AppDbContext>(
                option => option.UseInMemoryDatabase("test"));
             service.AddMobileAPIService("Test");
@@ -35,9 +35,9 @@ namespace Backend.Infratructure.Test
         public void GetService_ShouldRetunCorrectType()
         {
             var userRepositoryResolved = _serviceProvider.GetRequiredService<IUserRepository>();
-            var cacheRepositoryResolved = _serviceProvider.GetRequiredService<ICacheRepository>();
+            var postRepositoryResolved= _serviceProvider.GetRequiredService<IPostRepository>();
             userRepositoryResolved.GetType().Should().Be(typeof(UserRepository));
-            cacheRepositoryResolved.GetType().Should().Be(typeof(CacheRepository)); 
+            postRepositoryResolved.GetType().Should().Be(typeof (PostRepository));
         }
     }
 }

@@ -16,16 +16,14 @@ namespace Application.Service
         private readonly IMapper _mapper;
         private readonly AppConfiguration _appConfiguration;
         private readonly ICurrentTime _currentTime;
-        private readonly ISendMailHelper _sendMailHelper;
         private readonly IClaimService _claimService;
         public PostService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
-            , ISendMailHelper sendMailHelper, IClaimService claimService)
+            ,  IClaimService claimService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _appConfiguration = appConfiguration;
             _currentTime = currentTime;
-            _sendMailHelper = sendMailHelper;
             _claimService = claimService;
         }
         public async Task<bool> BanPost(Guid postId)

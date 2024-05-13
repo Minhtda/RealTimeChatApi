@@ -7,6 +7,7 @@ using Backend.Domain.Test;
 using Domain.Entities;
 using Fare;
 using FluentAssertions;
+using FluentAssertions.Equivalency;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -153,6 +154,31 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.CacheRepository.RemoveData(code)).Verifiable();
             //Assert
             Assert.ThrowsAsync<Exception>(async () => await _userService.ResetPassword(code,resetPasswordModel));
+        }
+        [Fact]
+        public async Task BanUser_ShouldReturnCorrect()
+        {
+            //Arrange
+            var user= _fixture.Build<User>().Create();  
+            //Act
+            _unitOfWorkMock.Setup(unit=>unit.UserRepository.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.SoftRemove(user)).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            bool isBan = await _userService.BanUser(user.Id);
+            //Assert
+            Assert.True(isBan);
+        }
+        [Fact]
+        public async Task BanUser_ShouldReturnException()
+        {
+            //Arrange
+            var user = _fixture.Build<User>().Create();
+            //Act
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.SoftRemove(user)).Verifiable();
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            //Assert
+            Assert.ThrowsAsync<Exception>(async () => await _userService.BanUser(Guid.NewGuid()));
         }
     }
 }
