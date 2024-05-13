@@ -16,5 +16,6 @@ namespace Application.InterfaceService
         Task<bool> ResetPassword(string code,ResetPasswordModel resetPasswordModel);
         Task<bool> Logout(string apiOrigin);
         Task<Token> LoginGoogle(string token, string apiOrigin);
+        Task<bool> BanUser(Guid userId);
     }
 }

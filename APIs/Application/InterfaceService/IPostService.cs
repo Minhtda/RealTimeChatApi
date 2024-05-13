@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.InterfaceService
 {
-    public interface IPaymentService
+    public  interface IPostService
     {
-        public string GetPayemntUrl();
-        public int ReturnTransactionStatus();
+        Task<bool> BanPost(Guid postId);
     }
 }

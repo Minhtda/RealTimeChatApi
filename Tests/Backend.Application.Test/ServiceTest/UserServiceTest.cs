@@ -132,6 +132,7 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(user.Email);
             _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(user)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            _unitOfWorkMock.Setup(unit=>unit.CacheRepository.RemoveData(code)).Verifiable();
             bool isResetSuccess= await _userService.ResetPassword(code, resetPasswordModel);
             //Assert
             Assert.True(isResetSuccess);
@@ -149,6 +150,7 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(user.Email);
             _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(user)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            _unitOfWorkMock.Setup(unit => unit.CacheRepository.RemoveData(code)).Verifiable();
             //Assert
             Assert.ThrowsAsync<Exception>(async () => await _userService.ResetPassword(code,resetPasswordModel));
         }

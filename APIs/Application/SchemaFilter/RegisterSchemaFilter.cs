@@ -23,7 +23,7 @@ namespace Application.SchemaFilter
                     ["Password"] = new OpenApiString("string"),
                     ["Fullname"] = new OpenApiString("string"),
                     ["Birthday"] = new OpenApiString(DateTime.UtcNow.ToString("yyyy-MM-dd")),
-                    ["Phonenumber"] = new OpenApiString("string"),
+                    ["Phonenumber"] = new OpenApiString("0933125677"),
                 };
             }
         }

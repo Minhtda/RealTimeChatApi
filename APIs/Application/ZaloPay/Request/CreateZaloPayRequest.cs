@@ -39,6 +39,11 @@ namespace Application.ZaloPay.Request
 
             this.Mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256,key,data);
         }
+        public void MakeSignatureForAppTransStatus(string key)
+        {
+            var data=AppId + "|" + AppTransId + "|" + key;
+            this.Mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, key, data);
+        }
         public Dictionary<string, string> GetContent()
         {
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
@@ -78,6 +83,32 @@ namespace Application.ZaloPay.Request
             else
             {
                 return (false, response.ReasonPhrase ?? string.Empty);
+            }
+        }
+        public (int,string) GetStatus (string appTransStatusUrl)
+        {
+            using var client = new HttpClient();
+            var content = new FormUrlEncodedContent(GetContent());
+            var response = client.PostAsync(appTransStatusUrl, content).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+                var responseData = JsonConvert
+                    .DeserializeObject<CreateZaloPayAppTransStatusResponse>(responseContent);
+                if (responseData.ReturnCode == 1)
+                {
+                    return (responseData.ReturnCode, responseData.ReturnMessage);
+                }
+                else
+                {
+                    return (responseData.ReturnCode, responseData.ReturnMessage);
+                }
+
+            }
+            else
+            {
+                return (0, response.ReasonPhrase ?? string.Empty);
             }
         }
     }

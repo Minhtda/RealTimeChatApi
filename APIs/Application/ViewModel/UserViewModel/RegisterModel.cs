@@ -10,7 +10,7 @@ namespace Application.ViewModel.UserViewModel
     public class RegisterModel
     {
         public string Username { get; set; }
-        [EmailAddress]
+       // [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
         public string Fullname { get; set; }

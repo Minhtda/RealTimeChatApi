@@ -4,6 +4,7 @@ using Application.Util;
 using Application.ViewModel.UserViewModel;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enum;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -198,6 +199,21 @@ namespace Application.Service
                 // Other exceptions
                 throw new Exception("Failed to validate token", ex);
             }
+        }
+
+        public async Task<bool> BanUser(Guid userId)
+        {
+            var user= await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User cannot be found");
+            }
+            if(user.Role.RoleName==nameof(RoleName.Admin))
+            {
+                throw new Exception("You cannot ban this user");
+            }
+            _unitOfWork.UserRepository.SoftRemove(user);
+            return await _unitOfWork.SaveChangeAsync() > 0;
         }
     }
 }

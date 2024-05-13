@@ -97,5 +97,15 @@ namespace MobileAPI.Controllers
                 return Ok(newToken);
             }
         }
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> BanUser(Guid userId)
+        {
+            bool isBan = await _userService.BanUser(userId);
+            if (isBan)
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
     }
 }

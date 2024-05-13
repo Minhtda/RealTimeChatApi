@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace MobileAPI.Controllers
         {
             _paymentService = paymentService;
         }
+        [Authorize]
         [HttpGet]
         public IActionResult GetPaymentUrl() 
         {
@@ -20,6 +22,17 @@ namespace MobileAPI.Controllers
                 return BadRequest(payemntUrl);
             }
             return Ok(payemntUrl);
+        }
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetPaymentStatus()
+        {
+            var paymentStatus = _paymentService.ReturnTransactionStatus();
+            if (paymentStatus > 0)
+            {
+                return Ok(paymentStatus);
+            }
+            return BadRequest(paymentStatus);
         }
     }
 }
