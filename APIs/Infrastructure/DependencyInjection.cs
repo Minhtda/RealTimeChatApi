@@ -28,6 +28,7 @@ namespace Infrastructure
             });
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICacheRepository,CacheRepository>();
+            services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;    
         }
