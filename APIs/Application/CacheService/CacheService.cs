@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Cache
+namespace Application.CacheService
 {
-    public class CacheRepository : ICacheService
+    public class CacheService : ICacheService
     {
         private readonly IDatabase _database;
-        public CacheRepository(IDatabase database)
+        public CacheService(IDatabase database)
         {
             _database = database;
         }

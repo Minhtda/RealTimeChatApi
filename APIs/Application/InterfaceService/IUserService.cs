@@ -1,4 +1,5 @@
 ﻿using Application.ViewModel.UserViewModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,6 @@ namespace Application.InterfaceService
         Task<bool> Logout(string apiOrigin);
         Task<Token> LoginGoogle(string token, string apiOrigin);
         Task<bool> BanUser(Guid userId);
+        Task<List<User>> GetAllUserAsync();
     }
 }

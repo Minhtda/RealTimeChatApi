@@ -27,8 +27,9 @@ namespace Application.Service
         private readonly ICurrentTime _currentTime;
         private readonly ISendMailHelper _sendMailHelper;
         private readonly IClaimService _claimService;
+        private readonly ICacheService _cacheService;
         public UserService(IUnitOfWork unitOfWork,IMapper mapper,AppConfiguration appConfiguration,ICurrentTime currentTime
-            ,ISendMailHelper sendMailHelper,IClaimService claimService)
+            ,ISendMailHelper sendMailHelper,IClaimService claimService,ICacheService cacheService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -36,11 +37,12 @@ namespace Application.Service
             _currentTime = currentTime;
             _sendMailHelper = sendMailHelper;
             _claimService = claimService;
+            _cacheService = cacheService;
         }
 
         public bool CheckVerifyCode(string key)
         {
-            var email=  _unitOfWork.CacheRepository.GetData<string>(key);
+            var email=  _cacheService.GetData<string>(key);
             if(email == null)
             {
                 return false;
@@ -81,7 +83,7 @@ namespace Application.Service
                 throw new Exception("Password is not correct");
             }
             var findKey = user.Id.ToString() + "_" + apiOrigin;
-           string? loginData = _unitOfWork.CacheRepository.GetData<string>(findKey);
+           string? loginData = _cacheService.GetData<string>(findKey);
             if (loginData!=null)
             {
                 throw new Exception("You already login");
@@ -89,7 +91,7 @@ namespace Application.Service
             var accessToken = user.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
             var refreshToken = RefreshToken.GetRefreshToken();
             var key=user.Id.ToString()+ "_" + apiOrigin;
-            var cacheData = _unitOfWork.CacheRepository.SetData<string>(key, refreshToken,_currentTime.GetCurrentTime().AddDays(2));
+            var cacheData = _cacheService.SetData<string>(key, refreshToken,_currentTime.GetCurrentTime().AddDays(2));
             return new Token
             {
                 accessToken = accessToken,
@@ -101,7 +103,7 @@ namespace Application.Service
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(_claimService.GetCurrentUserId);
             string key= user.Id.ToString()+ "_" + apiOrigin;
-            bool isDelete= (bool)_unitOfWork.CacheRepository.RemoveData(key);
+            bool isDelete= (bool)_cacheService.RemoveData(key);
             return isDelete;
         }
 
@@ -111,13 +113,13 @@ namespace Application.Service
             {
                 throw new Exception("Password do not match");
             }
-            var email = _unitOfWork.CacheRepository.GetData<string>(code);
+            var email = _cacheService.GetData<string>(code);
             var user = await _unitOfWork.UserRepository.FindUserByEmail(email);
             if (user != null)
             {
                 user.PasswordHash = resetPasswordModel.Password.Hash();
                 _unitOfWork.UserRepository.Update(user);
-                _unitOfWork.CacheRepository.RemoveData(code);
+                _cacheService.RemoveData(code);
             }
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -148,7 +150,7 @@ namespace Application.Service
                     return false;
                 };
 
-               _unitOfWork.CacheRepository.SetData(key, email, DateTimeOffset.Now.AddMinutes(10));
+               _cacheService.SetData(key, email, DateTimeOffset.Now.AddMinutes(10));
             }
             catch (Exception ex)
             {
@@ -182,7 +184,7 @@ namespace Application.Service
                 var accessToken = loginUser.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
                 var refreshToken = RefreshToken.GetRefreshToken();
                 var key = loginUser.Id.ToString() + "_" + apiOrigin;
-                var cacheData = _unitOfWork.CacheRepository.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
+                var cacheData = _cacheService.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
                 return new Token
                 {
                     accessToken = accessToken,
@@ -214,6 +216,16 @@ namespace Application.Service
             }
             _unitOfWork.UserRepository.SoftRemove(user);
             return await _unitOfWork.SaveChangeAsync() > 0;
+        }
+
+        public async Task<List<User>> GetAllUserAsync()
+        {
+          List<User> users = await _unitOfWork.UserRepository.GetAllAsync();
+           if(users == null)
+            {
+                throw new Exception("Error in getting user");
+            }
+           return users;
         }
     }
 }

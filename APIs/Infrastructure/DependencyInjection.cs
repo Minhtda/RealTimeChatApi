@@ -16,18 +16,10 @@ namespace Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructureService(this IServiceCollection services,string databaseConnectionString,string cacheConnectionString)
+        public static IServiceCollection AddInfrastructureService(this IServiceCollection services,string databaseConnectionString)
         {
-            var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...
-            options.Password = "MinhQuan@123";
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(databaseConnectionString).EnableSensitiveDataLogging());
-            services.AddScoped<IDatabase>(cfg =>
-            {
-                IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect(options);
-                return multiplexer.GetDatabase();
-            });
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ICacheRepository,CacheRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;    

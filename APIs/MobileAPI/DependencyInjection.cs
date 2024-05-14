@@ -7,11 +7,16 @@ using Application.Service;
 using Application.ZaloPay.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Application.Util;
+using Infrastructure.Cache;
+using Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
+using Application.CacheService;
 namespace MobileAPI
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddMobileAPIService(this IServiceCollection services,string secretKey) 
+        public static IServiceCollection AddMobileAPIService(this IServiceCollection services,string secretKey,string cacheConnectionString) 
         {
             services.AddHttpContextAccessor();
             services.AddScoped<IClaimService, ClaimService>();
@@ -20,8 +25,16 @@ namespace MobileAPI
             services.AddScoped<IPaymentService, PaymentService>();  
             services.AddScoped<ISendMailHelper, SendMailHelper>();  
             services.AddScoped<IPostService, PostService>();
+            services.AddScoped<ICacheService, CacheService>();
             services.AddDistributedMemoryCache();
             services.AddSession();
+            var options = ConfigurationOptions.Parse(cacheConnectionString); // host1:port1, host2:port2, ...
+            options.Password = "MinhQuan@123";
+            services.AddScoped<IDatabase>(cfg =>
+            {
+                IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect(options);
+                return multiplexer.GetDatabase();
+            });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options =>
               {

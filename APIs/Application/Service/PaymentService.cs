@@ -16,11 +16,13 @@ namespace Application.Service
         private readonly ZaloPayConfig zaloPayConfig;
         private readonly IClaimService _claimsService;
         private readonly IUnitOfWork _unitOfWork;
-        public PaymentService(IOptions<ZaloPayConfig> zaloPayConfig, IClaimService claimsService,IUnitOfWork unitOfWork)
+        private readonly ICacheService _cacheService;
+        public PaymentService(IOptions<ZaloPayConfig> zaloPayConfig, IClaimService claimsService,IUnitOfWork unitOfWork, ICacheService cacheService)
         {
             this.zaloPayConfig = zaloPayConfig.Value;
             _claimsService = claimsService;
             _unitOfWork = unitOfWork;
+            _cacheService = cacheService;
         }
         public string GetPayemntUrl()
         {
@@ -31,7 +33,7 @@ namespace Application.Service
             (bool createZaloPayLinkResult, string? createZaloPayMessage) = zaloPayRequest.GetLink(zaloPayConfig.PaymentUrl);
             if (createZaloPayLinkResult)
             {
-                _unitOfWork.CacheRepository.SetData<string>(_claimsService.GetCurrentUserId.ToString(), zaloPayRequest.AppTransId, DateTimeOffset.UtcNow.AddHours(20));
+                _cacheService.SetData<string>(_claimsService.GetCurrentUserId.ToString(), zaloPayRequest.AppTransId, DateTimeOffset.UtcNow.AddHours(20));
                 paymentUrl = createZaloPayMessage;
             }
             return paymentUrl;
@@ -39,7 +41,7 @@ namespace Application.Service
         public int ReturnTransactionStatus()
         {
             int status = 0;
-            string apptransid = _unitOfWork.CacheRepository.GetData<string>(_claimsService.GetCurrentUserId.ToString());
+            string apptransid = _cacheService.GetData<string>(_claimsService.GetCurrentUserId.ToString());
             var zaloPayRequest = new CreateZaloPayRequest(zaloPayConfig.AppId, null, 0, 0, apptransid, null, null);
             zaloPayRequest.MakeSignatureForAppTransStatus(zaloPayConfig.Key1);
             (int appTransStatus, string? appTransMessage) = zaloPayRequest.GetStatus(zaloPayConfig.AppTransStatusUrl);

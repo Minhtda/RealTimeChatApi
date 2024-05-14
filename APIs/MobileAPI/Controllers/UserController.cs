@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceService;
 using Application.ViewModel.UserViewModel;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -106,6 +107,12 @@ namespace MobileAPI.Controllers
                 return NoContent();
             }
             return BadRequest();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllUser()
+        {
+            List<User> users= await _userService.GetAllUserAsync();
+            return Ok(users);
         }
     }
 }

@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using MobileAPI;
 using System.Reflection;
+using System.Security.Claims;
+using System.Threading.RateLimiting;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,8 +17,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddInfrastructureService(configuration!.DatabaseConnectionString, configuration!.CacheConnectionString);
-builder.Services.AddMobileAPIService(configuration!.JWTSecretKey);
+builder.Services.AddInfrastructureService(configuration!.DatabaseConnectionString);
+builder.Services.AddMobileAPIService(configuration!.JWTSecretKey,configuration!.CacheConnectionString);
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddSingleton(configuration);
 builder.Services.Configure<ZaloPayConfig>(builder.Configuration.GetSection(ZaloPayConfig.ConfigName));
@@ -69,6 +71,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.UseSession();
+
+//app.UseRateLimiter();
 
 app.MapControllers();
 

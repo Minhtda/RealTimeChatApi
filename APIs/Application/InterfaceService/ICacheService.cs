@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Cache
+namespace Application.InterfaceService
 {
-    public interface ICacheRepository
+    public interface ICacheService
     {
         /// <summary>
         /// Get Data using key

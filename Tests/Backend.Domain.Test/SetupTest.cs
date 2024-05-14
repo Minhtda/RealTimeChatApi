@@ -6,7 +6,6 @@ using Application.Util;
 using AutoFixture;
 using AutoMapper;
 using Infrastructure;
-using Infrastructure.Cache;
 using Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -26,7 +25,7 @@ namespace Backend.Domain.Test
         protected readonly Mock<IClaimService> _claimServiceMock;
         protected readonly Mock<IUnitOfWork> _unitOfWorkMock;
         protected readonly Mock<ICurrentTime> _currentTimeMock;
-        protected readonly Mock<ICacheRepository> _cacheRepositoryMock;
+        protected readonly Mock<ICacheService> _cacheRepositoryMock;
         protected readonly Mock<ISendMailHelper> _sendMailHelperMock;
         protected readonly Mock<AppConfiguration> _appConfiguration;
         protected readonly Mock<IPostRepository> _postRepositoryMock;
@@ -48,7 +47,7 @@ namespace Backend.Domain.Test
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _claimServiceMock = new Mock<IClaimService>();
             _currentTimeMock=new Mock<ICurrentTime>();
-            _cacheRepositoryMock=new Mock<ICacheRepository>();
+            _cacheRepositoryMock=new Mock<ICacheService>();
             _appConfiguration = new Mock<AppConfiguration>();
             _claimServiceMock.Setup(x => x.GetCurrentUserId).Returns(Guid.Empty);
             _currentTimeMock.Setup(x=>x.GetCurrentTime()).Returns(DateTime.UtcNow);
