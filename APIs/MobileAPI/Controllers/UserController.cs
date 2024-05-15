@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -114,5 +115,16 @@ namespace MobileAPI.Controllers
             List<User> users= await _userService.GetAllUserAsync();
             return Ok(users);
         }
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser(UpdateUserProfileModel updateUserProfileModel)
+        {
+            bool isUpdate=await _userService.UpdateUserProfileAsync(updateUserProfileModel);
+            if (isUpdate)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
     }
 }

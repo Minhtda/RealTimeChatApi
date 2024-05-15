@@ -1,4 +1,5 @@
-﻿using Application.ViewModel.UserViewModel;
+﻿using Application.ViewModel.UserModel;
+using Application.ViewModel.UserViewModel;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -19,5 +20,6 @@ namespace Application.InterfaceService
         Task<Token> LoginGoogle(string token, string apiOrigin);
         Task<bool> BanUser(Guid userId);
         Task<List<User>> GetAllUserAsync();
+        Task<bool> UpdateUserProfileAsync(UpdateUserProfileModel updateUserProfileModel);
     }
 }

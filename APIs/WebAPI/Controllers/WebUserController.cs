@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -82,6 +83,16 @@ namespace WebAPI.Controllers
             if (isBan)
             {
                 return NoContent();
+            }
+            return BadRequest();
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser(UpdateUserProfileModel updateUserProfileModel)
+        {
+            bool isUpdate = await _userService.UpdateUserProfileAsync(updateUserProfileModel);
+            if (isUpdate)
+            {
+                return Ok();
             }
             return BadRequest();
         }

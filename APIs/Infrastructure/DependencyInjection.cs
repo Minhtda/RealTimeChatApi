@@ -1,7 +1,6 @@
 ﻿using Application;
 using Application.InterfaceRepository;
 using Application.InterfaceService;
-using Infrastructure.Cache;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

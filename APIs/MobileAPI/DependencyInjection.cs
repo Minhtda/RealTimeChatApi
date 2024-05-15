@@ -7,7 +7,7 @@ using Application.Service;
 using Application.ZaloPay.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Application.Util;
-using Infrastructure.Cache;
+using Application.CacheService;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;

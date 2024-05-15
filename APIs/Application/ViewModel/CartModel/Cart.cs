@@ -19,7 +19,7 @@ namespace Application.ViewModel.CartModel
         }
         public void AddToCart(Item item)
         {
-            this.Items.Append(item);
+            this.Items.Add(item);
             this.TotalPrice += item.Price * item.Amount;
         }
     }

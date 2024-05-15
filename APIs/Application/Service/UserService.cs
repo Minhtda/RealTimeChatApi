@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.InterfaceService;
 using Application.Util;
+using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
 using AutoMapper;
 using Domain.Entities;
@@ -226,6 +227,19 @@ namespace Application.Service
                 throw new Exception("Error in getting user");
             }
            return users;
+        }
+
+        public async Task<bool> UpdateUserProfileAsync(UpdateUserProfileModel updateUserProfileModel)
+        {
+            var findUser = await _unitOfWork.UserRepository.GetByIdAsync(_claimService.GetCurrentUserId);
+            if (findUser == null)
+            {
+                throw new Exception("Cannot find user");
+            }
+             _mapper.Map(updateUserProfileModel,findUser,typeof(UpdateUserProfileModel),typeof(User));
+            (findUser.FirstName, findUser.LastName) = StringUtil.SplitName(updateUserProfileModel.Fullname);
+            _unitOfWork.UserRepository.Update(findUser);
+            return await _unitOfWork.SaveChangeAsync() > 0;
         }
     }
 }

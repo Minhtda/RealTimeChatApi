@@ -1,4 +1,5 @@
 ﻿using Application.ViewModel.CartModel;
+using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
 using AutoMapper;
 using Domain.Entities;
@@ -20,6 +21,7 @@ namespace Infrastructure.Mappers
         internal void CreateUserMap()
         {
             CreateMap<RegisterModel,User>().ReverseMap();
+            CreateMap<UpdateUserProfileModel,User>().ReverseMap();  
         }
         internal void CreateProductMap()
         {
