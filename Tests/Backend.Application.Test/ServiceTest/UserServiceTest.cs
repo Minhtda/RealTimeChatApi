@@ -23,7 +23,7 @@ namespace Backend.Application.Test.ServiceTest
         private readonly IUserService _userService;
         public UserServiceTest()
         {
-            _userService = new UserService(_unitOfWorkMock.Object, _mapper,_appConfiguration.Object,_currentTimeMock.Object,_sendMailHelperMock.Object,_claimServiceMock.Object) ;
+            _userService = new UserService(_unitOfWorkMock.Object, _mapper,_appConfiguration.Object,_currentTimeMock.Object,_sendMailHelperMock.Object,_claimServiceMock.Object,_cacheServiceMock.Object) ;
         }
         [Fact]
         public async Task Register_ShouldReturnTrue()
@@ -63,7 +63,7 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.UserRepository.FindUserByEmail(mockUser.Email)).ReturnsAsync(mockUser);
             _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(mockUser)).Verifiable();
             _unitOfWorkMock.Setup(unit=>unit.SaveChangeAsync()).ReturnsAsync(1);
-            _unitOfWorkMock.Setup(unit=>unit.CacheRepository.GetData<string>(mockUser.Id.ToString())).Returns((string)null);
+            
             _appConfiguration.SetupAllProperties();
             _appConfiguration.Object.JWTSecretKey = "Testtetsttetstetstetetstettsttxtttwtsttwtefdwqw";
             //Act
@@ -82,7 +82,8 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.UserRepository.FindUserByEmail(mockUser.Email)).ReturnsAsync((User)null);
             _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(mockUser)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
-            _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(mockUser.Id.ToString())).Returns((string)null);
+            //  _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(mockUser.Id.ToString())).Returns((string)null);
+            _cacheServiceMock.Setup(cache => cache.GetData<string>(mockUser.Id.ToString())).Returns((string)null);
             _appConfiguration.SetupAllProperties();
             _appConfiguration.Object.JWTSecretKey = "Testtetsttetstetstetetstettsttxtttwtsttwtefdwqw";
             //Assert
@@ -95,7 +96,8 @@ namespace Backend.Application.Test.ServiceTest
             var code = StringUtil.RandomString(6);
             var email = _fixture.Create<MailAddress>();
             //Act
-            _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(email.Address);
+            //   _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(email.Address);
+            _cacheServiceMock.Setup(cache => cache.GetData<string>(code)).Returns(email.Address);
             bool isCorrectCode =  _userService.CheckVerifyCode(code);
             //Assert
             Assert.True(isCorrectCode);
@@ -107,7 +109,8 @@ namespace Backend.Application.Test.ServiceTest
             var code = StringUtil.RandomString(6);
             var email = _fixture.Create<MailAddress>();
             //Act
-            _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns((string)null);
+            // _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns((string)null);
+            _cacheServiceMock.Setup(cache => cache.GetData<string>(code)).Returns((string)null);
             bool isCorrectCode = _userService.CheckVerifyCode(code);
             //Assert
             Assert.False(isCorrectCode);
@@ -130,10 +133,11 @@ namespace Backend.Application.Test.ServiceTest
             user.PasswordHash = resetPasswordModel.Password.Hash();
             //Act
             _unitOfWorkMock.Setup(unit => unit.UserRepository.FindUserByEmail(user.Email)).ReturnsAsync(user);
-            _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(user.Email);
+          //  _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(user.Email);
+           
             _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(user)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
-            _unitOfWorkMock.Setup(unit=>unit.CacheRepository.RemoveData(code)).Verifiable();
+            _cacheServiceMock.Setup(cache => cache.RemoveData(code)).Verifiable();
             bool isResetSuccess= await _userService.ResetPassword(code, resetPasswordModel);
             //Assert
             Assert.True(isResetSuccess);
@@ -148,10 +152,11 @@ namespace Backend.Application.Test.ServiceTest
             user.PasswordHash = resetPasswordModel.Password.Hash();
             //Act
             _unitOfWorkMock.Setup(unit => unit.UserRepository.FindUserByEmail(user.Email)).ReturnsAsync(user);
-            _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(user.Email);
+            // _unitOfWorkMock.Setup(unit => unit.CacheRepository.GetData<string>(code)).Returns(user.Email);
+            _cacheServiceMock.Setup(cache => cache.GetData<string>(code)).Returns(user.Email);
             _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(user)).Verifiable();
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
-            _unitOfWorkMock.Setup(unit => unit.CacheRepository.RemoveData(code)).Verifiable();
+            _cacheServiceMock.Setup(cache => cache.RemoveData(code)).Verifiable();
             //Assert
             Assert.ThrowsAsync<Exception>(async () => await _userService.ResetPassword(code,resetPasswordModel));
         }

@@ -3,7 +3,7 @@ using Application.InterfaceService;
 using Backend.Domain.Test;
 using FluentAssertions;
 using Infrastructure;
-using Infrastructure.Cache;
+using Application.CacheService;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,11 +24,11 @@ namespace Backend.Infratructure.Test
         public DependencyInjectionTest()
         {
             var service=new ServiceCollection();
-            service.AddInfrastructureService("Testing", "localhost:6379;password:MinhQuan@123");
+            service.AddInfrastructureService("Testing");
             service.AddDbContext<AppDbContext>(
                option => option.UseInMemoryDatabase("test"));
-            service.AddMobileAPIService("Test");
-            service.AddWebAPIService("Test");   
+            service.AddMobileAPIService("Test","TestMobile");
+            service.AddWebAPIService("Test", "TestWeb");   
             _serviceProvider = service.BuildServiceProvider();
         }
         [Fact]
