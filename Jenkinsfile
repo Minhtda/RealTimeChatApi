@@ -10,17 +10,18 @@ pipeline{
           }
          
         }
-     }
-      post {
-           success {
-            echo 'Pull code from git success'
-                }
-      }
-    stage('Restore'){
+         stage('Restore'){
                   steps {
                         withDotNet(sdk:'7.0'){
                             dotnetRestore project: 'BackendAPI.sln'
                         }
                     }
     }
+     }
+      post {
+           success {
+            echo 'Pull code from git success'
+                }
+      }
+   
 }
