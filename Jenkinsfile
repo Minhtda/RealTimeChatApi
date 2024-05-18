@@ -16,8 +16,8 @@ pipeline{
                             dotnetRestore project: 'BackendAPI.sln'
                         }
                     }
-        }
-     }
+              }  
+         }
       post {
            success {
              echo 'Pull code from git server success'
