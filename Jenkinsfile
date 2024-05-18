@@ -1,7 +1,7 @@
 pipeline{
   agent any 
      tools {
-           dotnetsdk "7.0" // Name: 5.0, URL: (download URL for .NET SDK 5.0)
+           dotnetsdk "7.0" 
            }
       stages {
         stage('Checkout'){
