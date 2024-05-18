@@ -13,6 +13,7 @@ COPY ["APIs/Application/Application.csproj", "APIs/Application/"]
 COPY ["APIs/Domain/Domain.csproj", "APIs/Domain/"]
 COPY ["APIs/Infrastructure/Infrastructure.csproj", "APIs/Infrastructure/"]
 RUN dotnet restore "./APIs/WebAPI/./WebAPI.csproj"
+RUN dotnet dev-certs https
 COPY . .
 WORKDIR "/src/APIs/WebAPI"
 RUN dotnet build "./WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
@@ -24,4 +25,5 @@ RUN dotnet publish "./WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=build /root/.dotnet/corefx/cryptography/x509stores/my/* /root/.dotnet/corefx/cryptography/x509stores/my/
 ENTRYPOINT ["dotnet", "WebAPI.dll"]

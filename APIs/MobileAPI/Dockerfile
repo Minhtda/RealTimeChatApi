@@ -13,6 +13,7 @@ COPY ["APIs/Application/Application.csproj", "APIs/Application/"]
 COPY ["APIs/Domain/Domain.csproj", "APIs/Domain/"]
 COPY ["APIs/Infrastructure/Infrastructure.csproj", "APIs/Infrastructure/"]
 RUN dotnet restore "./APIs/MobileAPI/./MobileAPI.csproj"
+RUN dotnet dev-certs https
 COPY . .
 WORKDIR "/src/APIs/MobileAPI"
 RUN dotnet build "./MobileAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
@@ -24,4 +25,5 @@ RUN dotnet publish "./MobileAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=build /root/.dotnet/corefx/cryptography/x509stores/my/* /root/.dotnet/corefx/cryptography/x509stores/my/
 ENTRYPOINT ["dotnet", "MobileAPI.dll"]
