@@ -9,8 +9,8 @@ pipeline{
         }
      }
       post {
-            success {
-                   echo 'Pull code success'
+           success {
+            echo 'Pull code from git success'
                 }
       }
 }
