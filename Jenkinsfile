@@ -1,5 +1,8 @@
 pipeline{
   agent any 
+     tools {
+           dotnetsdk ".NET 7.0" // Name: 5.0, URL: (download URL for .NET SDK 5.0)
+           }
       stages {
         stage('Checkout'){
           steps{
@@ -13,4 +16,11 @@ pipeline{
             echo 'Pull code from git success'
                 }
       }
+    stage('Restore'){
+                  steps {
+                        withDotNet(sdk:'7.0'){
+                            dotnetRestore project: 'BackendAPI.sln'
+                        }
+                    }
+    }
 }
