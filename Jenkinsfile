@@ -30,11 +30,6 @@ pipeline{
               }
             }
           }
-          stage('Collect test result'){
-            steps{
-              nunit testResultsPattern: 'coverage.cobertura.xml'
-            }
-          }
          }
       post {
            success {
