@@ -23,6 +23,13 @@ pipeline{
              }
              }
             }
+          stage('Test solution'){
+            steps {
+              withDotnet(sdk:'7.0'){
+                dotnetTest noBuild: true, project: 'BackendAPI.sln', sdk: '7.0'
+              }
+            }
+          }
          }
       post {
            success {
