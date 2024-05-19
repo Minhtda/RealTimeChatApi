@@ -32,7 +32,7 @@ pipeline{
           }
           stage('Publish HTML'){
             steps{
-              publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'Test/CoverageReport', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+              publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'Test/CoverageReport', reportFiles: 'Test/CoverageReport/**/*.coverage.cobertura.xml', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
             }
           }
          }
