@@ -39,7 +39,7 @@ pipeline{
       post {
            success {
              echo 'Pull code from git server success'
-                }
+            }
       }
    
 }
