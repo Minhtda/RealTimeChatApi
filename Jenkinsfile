@@ -30,6 +30,11 @@ pipeline{
               }
             }
           }
+         stage('Collect test data'){
+           steps{
+             recordCoverage qualityGates: [[criticality: 'NOTE', metric: 'MODULE']], tools: [[parser: 'COBERTURA', pattern: 'coverage.cobertura.xml']]
+           }
+         }
         stage('Pull code to server'){
           steps{
             sshPublisher(publishers: [sshPublisherDesc(configName: 'CapstoneSever', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: './githubpull.sh', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
