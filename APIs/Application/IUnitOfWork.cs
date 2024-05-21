@@ -12,6 +12,7 @@ namespace Application
     {
         public IUserRepository UserRepository { get;}
         public IPostRepository PostRepository { get;}
+        public IProductRepository ProductRepository { get;}
         public Task<int> SaveChangeAsync();
     }
 }

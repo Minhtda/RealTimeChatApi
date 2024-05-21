@@ -20,6 +20,7 @@ namespace Infrastructure
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(databaseConnectionString).EnableSensitiveDataLogging());
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;    
         }
