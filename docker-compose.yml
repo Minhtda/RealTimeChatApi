@@ -24,7 +24,7 @@ services:
         - capstone-api-network
       environment:
          - REDIS_PASSWORD=MinhQuan@123
-      command: /bin/sh -c "redis-server --requirepass MinhQuan@123"
+      command: redis-server /usr/local/etc/redis/redis.conf
  mobileapi:
     image: ${DOCKER_REGISTRY-}mobileapi
     build:
