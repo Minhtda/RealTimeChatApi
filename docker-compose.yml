@@ -31,7 +31,7 @@ services:
       context: .
       dockerfile: APIs/MobileAPI/Dockerfile
     ports:
-        - 7024:80  
+        - 7777:80  
     volumes:
        - "./APIs/MobileAPI/EmailTemplate:/app/EmailTemplate"
     networks:
@@ -42,7 +42,7 @@ services:
       context: .
       dockerfile: APIs/WebAPI/Dockerfile
     ports:
-        - 8024:80
+        - 9999:80
     volumes:
       - "./APIs/WebAPI/EmailTemplate:/app/EmailTemplate"
     networks:

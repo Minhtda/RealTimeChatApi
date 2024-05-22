@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.ViewModel.ProductModel;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ namespace WebAPI.Controllers
             return Ok(products);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(Product product)
+        public async Task<IActionResult> CreateProduct([FromForm]CreateProductModel product)
         {
             bool isCreate = await _productService.CreateProduct(product);
             if (isCreate)
