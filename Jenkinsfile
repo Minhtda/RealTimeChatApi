@@ -26,7 +26,7 @@ pipeline{
           stage('Test solution'){
             steps {
               withDotNet(sdk:'7.0'){
-                dotnetTest noBuild: true, project: 'BackendAPI.sln', sdk: '7.0',resultsDirectory: 'Test/CoverageReport',collect: 'XPlat Code Coverage'
+                dotnetTest noBuild: true, project: 'BackendAPI.sln', sdk: '7.0'
               }
             }
           }
