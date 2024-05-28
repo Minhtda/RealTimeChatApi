@@ -27,7 +27,9 @@ namespace Infrastructure.Mappers
         }
         internal void CreateProductMap()
         {
-            CreateMap<Item,Product>().ReverseMap();
+            CreateMap<Item,Product>()
+                .ForMember(src=>src.Id,opt=>opt.MapFrom(item=>item.ItemId))
+                .ReverseMap();
             CreateMap<CreateProductModel,Product>()
                 .ForMember(src=>src.CategoryId,opt=>opt.MapFrom(x=>x.CategoryId))
                 .ForMember(src=>src.ProductTypeId,opt=>opt.MapFrom(x=>x.ProductTypeId))

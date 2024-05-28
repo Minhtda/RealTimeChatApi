@@ -2,6 +2,7 @@
 using Application.InterfaceService;
 using Application.ViewModel.ProductModel;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,5 +52,6 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
+       
     }
 }

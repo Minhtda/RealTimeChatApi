@@ -22,5 +22,10 @@ namespace Application.ViewModel.CartModel
             this.Items.Add(item);
             this.TotalPrice += item.Price * item.Amount;
         }
+        public void RemoveItemFromCart(Guid itemId)
+        {
+            var item = Items.Where(x => x.ItemId == itemId).Single();
+            this.Items.Remove(item);
+        }
     }
 }

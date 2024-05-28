@@ -9,7 +9,6 @@ namespace Application.ViewModel.ProductModel
 {
     public class CreateProductModel
     {
-       // public ProductImageModel ProductImageUrl { get; set; }
         public IFormFile ProductImage { get; set; }
         public string ProductName { get; set; }
         public long ProductPrice { get; set; }
