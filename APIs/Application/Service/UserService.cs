@@ -65,7 +65,7 @@ namespace Application.Service
             }
             var newAccount = _mapper.Map<User>(registerModel);
             newAccount.BirthDay= birthDay;
-            newAccount.RoleId = 4;
+            newAccount.RoleId = 3;
             newAccount.PasswordHash = registerModel.Password.Hash();
             (newAccount.FirstName, newAccount.LastName) = StringUtil.SplitName(registerModel.Fullname);
             await _unitOfWork.UserRepository.AddAsync(newAccount);
