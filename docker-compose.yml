@@ -15,7 +15,7 @@ services:
         - 1431:1433
  cachedb:
       container_name: cachedb
-      image: redis:latest
+      image: redis:7
       volumes:
         - "./APIs/MobileAPI/RedisConfig:/usr/local/etc/redis"
       ports:
