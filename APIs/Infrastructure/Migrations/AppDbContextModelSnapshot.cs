@@ -112,6 +112,23 @@ namespace Infrastructure.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ExchangeCondition", b =>
+                {
+                    b.Property<int>("ConditionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConditionId"));
+
+                    b.Property<string>("ConditionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ConditionId");
+
+                    b.ToTable("ExchangeConditions");
+                });
+
             modelBuilder.Entity("Domain.Entities.Message", b =>
                 {
                     b.Property<Guid>("Id")
@@ -158,49 +175,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Order", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletetionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModificationBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<float>("TotalPrice")
-                        .HasColumnType("real");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
-                });
-
             modelBuilder.Entity("Domain.Entities.Post", b =>
                 {
                     b.Property<Guid>("Id")
@@ -236,6 +210,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.ToTable("Posts");
@@ -248,6 +225,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ConditionId")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("CreatedBy")
@@ -271,9 +251,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("PostId")
                         .HasColumnType("uniqueidentifier");
 
@@ -288,49 +265,17 @@ namespace Infrastructure.Migrations
                     b.Property<long>("ProductPrice")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("ProductTypeId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("ConditionId");
 
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("ProductTypeId");
+                    b.HasIndex("PostId")
+                        .IsUnique()
+                        .HasFilter("[PostId] IS NOT NULL");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProductType", b =>
-                {
-                    b.Property<int>("ProductTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductTypeId"));
-
-                    b.Property<string>("ProductTypeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductTypeId");
-
-                    b.ToTable("ProductTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            ProductTypeId = 1,
-                            ProductTypeName = "Trade"
-                        },
-                        new
-                        {
-                            ProductTypeId = 2,
-                            ProductTypeName = "Sell"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Rating", b =>
@@ -409,31 +354,19 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ReportTypeId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ReportPostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ReportUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReportTypeId");
+                    b.HasIndex("ReportPostId");
+
+                    b.HasIndex("ReportUserId");
 
                     b.ToTable("Reports");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ReportType", b =>
-                {
-                    b.Property<int>("ReportTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportTypeId"));
-
-                    b.Property<string>("ReportTypeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ReportTypeId");
-
-                    b.ToTable("ReportTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -466,13 +399,110 @@ namespace Infrastructure.Migrations
                         new
                         {
                             RoleId = 3,
-                            RoleName = "Buyer"
-                        },
-                        new
-                        {
-                            RoleId = 4,
-                            RoleName = "Seller"
+                            RoleName = "Member"
                         });
+                });
+
+            modelBuilder.Entity("Domain.Entities.Subcription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletetionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModificationBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("Price")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SubcriptionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("WalletTransactionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WalletTransactionId");
+
+                    b.ToTable("Subcriptions");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SubcriptionHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletetionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModificationBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("Rate")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SubcriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubcriptionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SubcriptionHistories");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -526,15 +556,15 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProfileImage")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("VerifyUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("WalletId")
                         .HasColumnType("uniqueidentifier");
@@ -547,6 +577,50 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Domain.Entities.VerifyUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletetionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsStudentAccount")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModificationBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("VerifyUsers");
                 });
 
             modelBuilder.Entity("Domain.Entities.Wallet", b =>
@@ -617,9 +691,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("TransactionType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -628,8 +699,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
 
                     b.HasIndex("WalletId");
 
@@ -720,40 +789,25 @@ namespace Infrastructure.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Order", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.HasOne("Domain.Entities.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
 
-                    b.HasOne("Domain.Entities.Order", null)
+                    b.HasOne("Domain.Entities.ExchangeCondition", "ConditionType")
                         .WithMany("Products")
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("ConditionId");
 
                     b.HasOne("Domain.Entities.Post", "Post")
-                        .WithMany("Products")
-                        .HasForeignKey("PostId");
-
-                    b.HasOne("Domain.Entities.ProductType", "ProductType")
-                        .WithMany()
-                        .HasForeignKey("ProductTypeId");
+                        .WithOne("Product")
+                        .HasForeignKey("Domain.Entities.Product", "PostId");
 
                     b.Navigation("Category");
 
-                    b.Navigation("Post");
+                    b.Navigation("ConditionType");
 
-                    b.Navigation("ProductType");
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Domain.Entities.Rating", b =>
@@ -777,13 +831,47 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Report", b =>
                 {
-                    b.HasOne("Domain.Entities.ReportType", "ReportType")
+                    b.HasOne("Domain.Entities.Post", "ReportPost")
                         .WithMany()
-                        .HasForeignKey("ReportTypeId")
+                        .HasForeignKey("ReportPostId");
+
+                    b.HasOne("Domain.Entities.User", "ReportUser")
+                        .WithMany()
+                        .HasForeignKey("ReportUserId");
+
+                    b.Navigation("ReportPost");
+
+                    b.Navigation("ReportUser");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Subcription", b =>
+                {
+                    b.HasOne("Domain.Entities.WalletTransaction", "WalletTransaction")
+                        .WithMany("Subcriptions")
+                        .HasForeignKey("WalletTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ReportType");
+                    b.Navigation("WalletTransaction");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SubcriptionHistory", b =>
+                {
+                    b.HasOne("Domain.Entities.Subcription", "Subcription")
+                        .WithMany("SubcriptionHistories")
+                        .HasForeignKey("SubcriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subcription");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -795,6 +883,17 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Domain.Entities.VerifyUser", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithOne("VerifyUser")
+                        .HasForeignKey("Domain.Entities.VerifyUser", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.Wallet", b =>
@@ -810,19 +909,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.WalletTransaction", b =>
                 {
-                    b.HasOne("Domain.Entities.Order", "Order")
-                        .WithMany("WalletTransactions")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.Wallet", "Wallet")
                         .WithMany("Transactions")
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Order");
 
                     b.Navigation("Wallet");
                 });
@@ -851,18 +942,22 @@ namespace Infrastructure.Migrations
                     b.Navigation("ReplyComments");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Order", b =>
+            modelBuilder.Entity("Domain.Entities.ExchangeCondition", b =>
                 {
                     b.Navigation("Products");
-
-                    b.Navigation("WalletTransactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.Post", b =>
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("Products");
+                    b.Navigation("Product")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Subcription", b =>
+                {
+                    b.Navigation("SubcriptionHistories");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -877,6 +972,9 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("SenderMessages");
 
+                    b.Navigation("VerifyUser")
+                        .IsRequired();
+
                     b.Navigation("Wallet")
                         .IsRequired();
                 });
@@ -884,6 +982,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Wallet", b =>
                 {
                     b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("Domain.Entities.WalletTransaction", b =>
+                {
+                    b.Navigation("Subcriptions");
                 });
 #pragma warning restore 612, 618
         }

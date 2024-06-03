@@ -32,7 +32,7 @@ namespace Infrastructure.Mappers
                 .ReverseMap();
             CreateMap<CreateProductModel,Product>()
                 .ForMember(src=>src.CategoryId,opt=>opt.MapFrom(x=>x.CategoryId))
-                .ForMember(src=>src.ProductTypeId,opt=>opt.MapFrom(x=>x.ProductTypeId))
+                .ForMember(src=>src.ConditionId,opt=>opt.MapFrom(x=>x.ProductTypeId))
                 .ReverseMap();   
         }
     }

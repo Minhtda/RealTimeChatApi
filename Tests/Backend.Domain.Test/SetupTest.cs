@@ -29,6 +29,7 @@ namespace Backend.Domain.Test
         protected readonly Mock<ISendMailHelper> _sendMailHelperMock;
         protected readonly Mock<AppConfiguration> _appConfiguration;
         protected readonly Mock<IPostRepository> _postRepositoryMock;
+        protected readonly Mock<IUploadFile> _uploadFileMock;
         public SetupTest()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName:Guid.NewGuid().ToString())
@@ -53,6 +54,7 @@ namespace Backend.Domain.Test
             _currentTimeMock.Setup(x=>x.GetCurrentTime()).Returns(DateTime.UtcNow);
             _sendMailHelperMock=new Mock<ISendMailHelper>();
             _postRepositoryMock = new Mock<IPostRepository>();
+            _uploadFileMock=new Mock<IUploadFile>();
         }
         public void Dispose()
         {

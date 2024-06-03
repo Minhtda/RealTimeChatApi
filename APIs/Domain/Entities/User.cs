@@ -12,7 +12,6 @@ namespace Domain.Entities
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public string PhoneNumber { get; set; }
-        public string? ProfileImage { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public DateTime BirthDay { get; set; }
@@ -21,6 +20,8 @@ namespace Domain.Entities
         public Role Role { get; set; }
         public Guid WalletId { get; set; }
         public Wallet Wallet { get; set; }
+        public Guid? VerifyUserId {  get; set; }
+        public VerifyUser VerifyUser { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Message> SenderMessages { get; set; }
         public ICollection<Message> ReceiverMessages { get; set; }

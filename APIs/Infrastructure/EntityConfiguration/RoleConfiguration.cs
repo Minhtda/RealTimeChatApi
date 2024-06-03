@@ -28,13 +28,9 @@ namespace Infrastructure.EntityConfiguration
             new Role
             {
                 RoleId=3,
-                RoleName=nameof(RoleName.Buyer),
-            },
-             new Role
-             {
-                 RoleId = 4,
-                 RoleName = nameof(RoleName.Seller),
-             }
+                RoleName=nameof(RoleName.Member),
+            }
+             
             );
         }
     }

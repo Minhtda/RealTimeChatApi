@@ -10,7 +10,8 @@ namespace Domain.Entities
     {
         public string PostTitle { get; set; }
         public string PostContent { get; set; }
-        public ICollection<Product> Products { get; set; }
+        public Guid ProductId { get; set; }
+        public Product Product { get; set; }
         public ICollection<Comment> Comments { get; set; }
     }
 }

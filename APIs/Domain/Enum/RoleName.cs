@@ -10,7 +10,6 @@ namespace Domain.Enum
     {
         Admin,
         Moderator,
-        Buyer,
-        Seller
+        Member
     }
 }

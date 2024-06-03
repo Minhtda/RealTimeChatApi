@@ -13,7 +13,6 @@ namespace Infrastructure.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<WalletTransaction> builder)
         {
-            builder.HasOne(x=>x.Order).WithMany(x=>x.WalletTransactions).HasForeignKey(x=>x.OrderId);
             builder.HasOne(x => x.Wallet).WithMany(x => x.Transactions).HasForeignKey(x => x.WalletId).OnDelete(deleteBehavior: DeleteBehavior.NoAction);
         }
     }
