@@ -19,7 +19,7 @@ pipeline{
         stage('Build solution') {
            steps {
               withDotNet(sdk: '7.0') { // Reference the tool by ID
-               dotnetBuild project: 'BackendAPI.sln', sdk: '7.0',noRestore: false
+               dotnetBuild project: 'BackendAPI.sln', sdk: '7.0',noRestore: true
              }
              }
             }
