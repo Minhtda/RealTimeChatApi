@@ -10,5 +10,6 @@ namespace Application.InterfaceService
     {
         public string GetPayemntUrl();
         public int ReturnTransactionStatus();
+        public Task<bool> AddMoneyToWallet();
     }
 }

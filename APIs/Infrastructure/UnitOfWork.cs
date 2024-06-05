@@ -16,12 +16,15 @@ namespace Infrastructure
         
         private readonly IPostRepository _postRepository;
         private readonly IProductRepository _productRepository;
-        public UnitOfWork(IUserRepository userRepository, AppDbContext dbContext, IPostRepository postRepository, IProductRepository productRepository)
+        private readonly IWalletRepository _walletRepository;
+        public UnitOfWork(IUserRepository userRepository, AppDbContext dbContext, 
+            IPostRepository postRepository, IProductRepository productRepository, IWalletRepository walletRepository)
         {
             _userRepository = userRepository;
             _dbContext = dbContext;
             _postRepository = postRepository;
             _productRepository = productRepository;
+            _walletRepository = walletRepository;
         }
 
         public IUserRepository UserRepository =>_userRepository;
@@ -30,6 +33,8 @@ namespace Infrastructure
         public IPostRepository PostRepository => _postRepository;
 
         public IProductRepository ProductRepository => _productRepository;
+
+        public IWalletRepository WalletRepository => _walletRepository;
 
         public Task<int> SaveChangeAsync()
         {

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Domain.Entities;
 namespace Application.Service
 {
     public class PaymentService : IPaymentService
@@ -24,16 +25,53 @@ namespace Application.Service
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
         }
+
+        public async Task<bool> AddMoneyToWallet()
+        {
+            int statusCode = ReturnTransactionStatus();
+            string key=_claimsService.ToString()+"_"+"Payment";
+            Wallet foundWallet = await _unitOfWork.WalletRepository.FindWalletByUserId(_claimsService.GetCurrentUserId);
+            string apptransid = _cacheService.GetData<string>(_claimsService.GetCurrentUserId.ToString());
+            long amount = _cacheService.GetData<long>(apptransid);
+            if (statusCode > 0)
+            {
+                if (foundWallet == null)
+                {
+                    Wallet wallet = new Wallet()
+                    {
+                        OwnerId = _claimsService.GetCurrentUserId,
+                        UserBalance = amount,
+                    };
+                    _cacheService.RemoveData(_claimsService.GetCurrentUserId.ToString());
+                    await _unitOfWork.WalletRepository.AddAsync(wallet);
+                }
+                else
+                {
+                    foundWallet.UserBalance += amount;
+                    _unitOfWork.WalletRepository.Update(foundWallet);
+                }
+
+            }
+            else
+            {
+                throw new Exception("Update user balance error");
+            }
+            return await _unitOfWork.SaveChangeAsync()>0;
+        }
+
         public string GetPayemntUrl()
         {
             string paymentUrl = "";
+            long amount=50000;
+            string key=_claimsService.GetCurrentUserId.ToString()+"_"+"Payment";
             var zaloPayRequest = new CreateZaloPayRequest(zaloPayConfig.AppId, zaloPayConfig.AppUser, DateTime.UtcNow.GetTimeStamp()
-                , 500000, DateTime.UtcNow.ToString("yyMMdd") + "_" + _claimsService.GetCurrentUserId.ToString(), "zalopayapp", "ZaloPay demo");
+                , amount, DateTime.UtcNow.ToString("yyMMdd") + "_" + _claimsService.GetCurrentUserId.ToString(), "zalopayapp", "ZaloPay demo");
             zaloPayRequest.MakeSignature(zaloPayConfig.Key1);
             (bool createZaloPayLinkResult, string? createZaloPayMessage) = zaloPayRequest.GetLink(zaloPayConfig.PaymentUrl);
             if (createZaloPayLinkResult)
             {
-                _cacheService.SetData<string>(_claimsService.GetCurrentUserId.ToString(), zaloPayRequest.AppTransId, DateTimeOffset.UtcNow.AddHours(20));
+                _cacheService.SetData<string>(key, zaloPayRequest.AppTransId, DateTimeOffset.UtcNow.AddHours(20));
+                _cacheService.SetData<long>(zaloPayRequest.AppTransId, amount, DateTimeOffset.UtcNow.AddDays(2));
                 paymentUrl = createZaloPayMessage;
             }
             return paymentUrl;

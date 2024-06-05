@@ -23,7 +23,7 @@ namespace MobileAPI.Controllers
             }
             return Ok(payemntUrl);
         }
-        [Authorize]
+        /*[Authorize]
         [HttpGet]
         public IActionResult GetPaymentStatus()
         {
@@ -33,6 +33,17 @@ namespace MobileAPI.Controllers
                 return Ok(paymentStatus);
             }
             return BadRequest(paymentStatus);
+        }*/
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> AddUserBalance() 
+        {
+            bool isAdded = await _paymentService.AddMoneyToWallet();
+            if (isAdded)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
     }
 }

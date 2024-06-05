@@ -13,6 +13,7 @@ namespace Application
         public IUserRepository UserRepository { get;}
         public IPostRepository PostRepository { get;}
         public IProductRepository ProductRepository { get;}
+        public IWalletRepository WalletRepository { get;}
         public Task<int> SaveChangeAsync();
     }
 }

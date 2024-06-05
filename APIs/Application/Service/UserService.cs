@@ -84,11 +84,11 @@ namespace Application.Service
                 throw new Exception("Password is not correct");
             }
             var findKey = user.Id.ToString() + "_" + apiOrigin;
-           string? loginData = _cacheService.GetData<string>(findKey);
+           /*string? loginData = _cacheService.GetData<string>(findKey);
             if (loginData!=null)
             {
                 throw new Exception("You already login");
-            }
+            }*/
             var accessToken = user.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
             var refreshToken = RefreshToken.GetRefreshToken();
             var key=user.Id.ToString()+ "_" + apiOrigin;
