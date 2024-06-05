@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.ViewModel.PostModel;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,20 @@ namespace Infrastructure.Repository
     {
         public PostRepository(AppDbContext appDbContext, IClaimService claimService, ICurrentTime currentTime) : base(appDbContext, claimService, currentTime)
         {
+
+        }
+        public async Task<List<Post>> GetAllPostsWithDetailsAsync()
+        {
+            var posts = await GetAllAsync(
+                p => p.Product,
+                p => p.Product.Category,
+                p => p.Product.ConditionType,
+                p => p.Comments,
+                p => p.Comments.Select(c => c.User),
+                p => p.Comments.SelectMany(c => c.ReplyComments)
+            );
+
+            return posts;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,11 @@ namespace MobileAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllPost()
         {
-            List<Post> posts = await _postService.GetAllPost();
+            var posts = await _postService.GetAllPost();
             return Ok(posts);
         }
         [HttpPost]
-        public async Task<IActionResult> CreatePost(Post post)
+        public async Task<IActionResult> CreatePost(CreatePostModel post)
         {
             bool isCreate = await _postService.CreatePost(post);
             if (isCreate)
@@ -29,7 +30,7 @@ namespace MobileAPI.Controllers
             return BadRequest();
         }
         [HttpPut]
-        public async Task<IActionResult> UpdatePost(Post post)
+        public async Task<IActionResult> UpdatePost(UpdatePostModel post)
         {
             bool isUpdated = await _postService.UpdatePost(post);
             if (isUpdated)
@@ -39,7 +40,7 @@ namespace MobileAPI.Controllers
             return BadRequest();
         }
         [HttpDelete]
-        public async Task<IActionResult> RemoveProduct(Guid postId)
+        public async Task<IActionResult> RemovePost(Guid postId)
         {
             bool isRemoved = await _postService.DeletePost(postId);
             if (isRemoved)
