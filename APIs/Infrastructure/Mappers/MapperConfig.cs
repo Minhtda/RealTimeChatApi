@@ -51,7 +51,6 @@ namespace Infrastructure.Mappers
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(x => x.ProductId))
                 .ReverseMap()
                 .ForMember(dest => dest.Product, opt => opt.MapFrom(x => x.Product));
-
         }
 
         internal void ProductMap()
