@@ -14,6 +14,17 @@ namespace Infrastructure.EntityConfiguration
         public void Configure(EntityTypeBuilder<ExchangeCondition> builder)
         {
             builder.HasKey(x => x.ConditionId);
+            builder.HasData(new ExchangeCondition
+            {
+                ConditionId=1,
+                ConditionType="For exchanging"
+            },
+            new ExchangeCondition
+            {
+                ConditionId = 2,
+                ConditionType="For donation"
+            }
+            );
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Application.InterfaceService;
+using Application.ViewModel.PostModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +14,7 @@ namespace WebAPI.Controllers
         {
             _postService = postService;
         }
+        [Authorize(Roles ="Admin,Moderator")]
         [HttpDelete("{postId}")]
         public async Task<IActionResult> BanPost(Guid postId)
         {
@@ -21,6 +24,13 @@ namespace WebAPI.Controllers
                 return NoContent();
             }
             return BadRequest();
+        }
+        [Authorize(Roles ="Admin,Moderator")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllPost()
+        {
+            List<PostModel> post= await _postService.GetAllPost();
+            return Ok(post);
         }
     }
 }

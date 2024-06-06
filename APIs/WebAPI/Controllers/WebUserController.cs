@@ -77,7 +77,7 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles="Admin,Moderator")]
         [HttpDelete("{userId}")]
         public async Task<IActionResult> BanUser(Guid userId)
         {
@@ -88,7 +88,6 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
-       
         [HttpGet]
         public async Task<IActionResult> GeAllUser()
         {

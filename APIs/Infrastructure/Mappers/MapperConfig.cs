@@ -43,12 +43,14 @@ namespace Infrastructure.Mappers
             CreateMap<CreatePostModel, Post>()
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(x => x.ProductId))
                 .ReverseMap();
+           
         }
         internal void PostMap()
         {
             CreateMap<PostModel, Post>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(x => x.ProductId))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
                 .ReverseMap()
                 .ForMember(dest => dest.Product, opt => opt.MapFrom(x => x.Product));
         }
