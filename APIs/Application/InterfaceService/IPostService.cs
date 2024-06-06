@@ -11,10 +11,10 @@ namespace Application.InterfaceService
     public  interface IPostService
     {
         Task<bool> BanPost(Guid postId);
-        Task<bool> CreatePost(Post Post);
-        Task<bool> UpdatePost(Post Post);
+        Task<bool> CreatePost(CreatePostModel Post);
+        Task<bool> UpdatePost(UpdatePostModel Post);
         Task<bool> DeletePost(Guid PostId);
-        Task<List<Post>> GetAllPost();
-        Task<List<PostModel>> GetPostWithProduct();
+        Task<List<PostModel>> GetAllPost();
+        Task<List<CreatePostModel>> GetPostWithProduct();
     }
 }

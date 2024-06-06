@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.InterfaceRepository;
 using Application.InterfaceService;
 using Application.Util;
 using Application.ViewModel.PostModel;
@@ -39,9 +40,10 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync()>0;
         }
 
-        public async Task<bool> CreatePost(Post Post)
+        public async Task<bool> CreatePost(CreatePostModel Post)
         {
-            await _unitOfWork.PostRepository.AddAsync(Post);
+            var newPost = _mapper.Map<Post>(Post);
+            await _unitOfWork.PostRepository.AddAsync(newPost);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
@@ -55,20 +57,21 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-        public async Task<List<Post>> GetAllPost()
+        public async Task<List<PostModel>> GetAllPost()
         {
-            List<Post> posts = await _unitOfWork.PostRepository.GetAllAsync();
-            return posts;
+            var posts = await _unitOfWork.PostRepository.GetAllPostsWithDetailsAsync();
+            return _mapper.Map<List<PostModel>>(posts);
         }
 
-        public Task<List<PostModel>> GetPostWithProduct()
+        public Task<List<CreatePostModel>> GetPostWithProduct()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> UpdatePost(Post Post)
+        public async Task<bool> UpdatePost(UpdatePostModel Post)
         {
-            _unitOfWork.PostRepository.Update(Post);
+            var updatePost = _mapper.Map<Post>(Post);
+            _unitOfWork.PostRepository.Update(updatePost);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
     }
