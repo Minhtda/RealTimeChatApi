@@ -1,5 +1,4 @@
-﻿using Application.ViewModel.CartModel;
-using Application.ViewModel.ProductModel;
+﻿using Application.ViewModel.ProductModel;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using System;

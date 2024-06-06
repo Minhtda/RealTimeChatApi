@@ -10,5 +10,7 @@ namespace Application.ViewModel.UserModel
     {
         public string Username { get; set; }
         public string Fullname { get; set; }
+        public DateOnly Birthday { get; set; }
+        public string Phonenumber { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Application.InterfaceService;
 using Application.Util;
-using Application.ViewModel.CartModel;
 using Application.ViewModel.ProductModel;
 using AutoMapper;
 using Domain.Entities;
@@ -49,20 +48,17 @@ namespace Application.Service
             }
             return await _unitOfWork.SaveChangeAsync()>0;
         }
-
         public async Task<List<Product>> GetAllProducts()
         {
             List<Product> products=await _unitOfWork.ProductRepository.GetAllAsync();
             return products;
         }
 
-       
         public async Task<bool> UpdateProduct(Product product)
         {
             _unitOfWork.ProductRepository.Update(product);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
-       
     }
 }

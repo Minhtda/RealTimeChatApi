@@ -1,6 +1,7 @@
 ﻿using Application.InterfaceService;
 using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -76,6 +77,7 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
+        [Authorize(Roles="Admin")]
         [HttpDelete("{userId}")]
         public async Task<IActionResult> BanUser(Guid userId)
         {
@@ -86,15 +88,12 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdateUser(UpdateUserProfileModel updateUserProfileModel)
+       
+        [HttpGet]
+        public async Task<IActionResult> GeAllUser()
         {
-            bool isUpdate = await _userService.UpdateUserProfileAsync(updateUserProfileModel);
-            if (isUpdate)
-            {
-                return Ok();
-            }
-            return BadRequest();
+            List<User> user=await _userService.GetAllUserAsync();
+            return Ok(user);
         }
     }
 }

@@ -241,5 +241,10 @@ namespace Application.Service
             _unitOfWork.UserRepository.Update(findUser);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
+
+        public async Task<List<User>> GetAllUser()
+        {
+            return await _unitOfWork.UserRepository.GetAllAsync();
+        }
     }
 }

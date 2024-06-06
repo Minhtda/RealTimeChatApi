@@ -21,5 +21,6 @@ namespace Application.InterfaceService
         Task<bool> BanUser(Guid userId);
         Task<List<User>> GetAllUserAsync();
         Task<bool> UpdateUserProfileAsync(UpdateUserProfileModel updateUserProfileModel);
+        Task<List<User>> GetAllUser();
     }
 }

@@ -1,5 +1,4 @@
-﻿using Application.ViewModel.CartModel;
-using Application.ViewModel.PostModel;
+﻿using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
@@ -29,13 +28,12 @@ namespace Infrastructure.Mappers
         internal void CreateUserMap()
         {
             CreateMap<RegisterModel,User>().ReverseMap();
-            CreateMap<UpdateUserProfileModel,User>().ReverseMap();  
+            CreateMap<UpdateUserProfileModel, User>()
+                .ForMember(src => src.BirthDay, opt => opt.MapFrom(x => x.Birthday.ToDateTime(TimeOnly.MinValue)))
+                .ReverseMap();  
         }
         internal void CreateProductMap()
         {
-            CreateMap<Item,Product>()
-                .ForMember(src=>src.Id,opt=>opt.MapFrom(item=>item.ItemId))
-                .ReverseMap();
             CreateMap<CreateProductModel,Product>()
                 .ForMember(src=>src.CategoryId,opt=>opt.MapFrom(x=>x.CategoryId))
                 .ForMember(src=>src.ConditionId,opt=>opt.MapFrom(x=>x.ProductTypeId))
