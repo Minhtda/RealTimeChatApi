@@ -43,17 +43,20 @@ namespace Infrastructure.Mappers
             CreateMap<CreatePostModel, Post>()
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(x => x.ProductId))
                 .ReverseMap();
+           
         }
         internal void PostMap()
         {
             CreateMap<PostModel, Post>()
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(x => x.ProductId))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
                 .ReverseMap();
         }
 
         internal void ProductMap()
         {
             CreateMap<Product, ProductModel>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(x => x.Id))
                 .ForMember(dest => dest.ConditionName, opt => opt.MapFrom(src => src.ConditionType.ConditionType))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
                 .ReverseMap();
