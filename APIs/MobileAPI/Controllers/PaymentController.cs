@@ -45,5 +45,16 @@ namespace MobileAPI.Controllers
             }
             return BadRequest();
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> UserRefund()
+        {
+            bool refundResult=await _paymentService.Refund();
+            if(refundResult)
+            {
+                return Ok(refundResult);
+            }
+            return BadRequest();
+        }
     }
 }

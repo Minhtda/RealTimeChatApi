@@ -85,7 +85,7 @@ namespace Application.ZaloPay.Request
                 return (false, response.ReasonPhrase ?? string.Empty);
             }
         }
-        public (int,string) GetStatus (string appTransStatusUrl)
+        public (int,long) GetStatus (string appTransStatusUrl)
         {
             using var client = new HttpClient();
             var content = new FormUrlEncodedContent(GetContent());
@@ -98,17 +98,17 @@ namespace Application.ZaloPay.Request
                     .DeserializeObject<CreateZaloPayAppTransStatusResponse>(responseContent);
                 if (responseData.ReturnCode == 1)
                 {
-                    return (responseData.ReturnCode, responseData.ReturnMessage);
+                    return (responseData.ReturnCode, responseData.ZpTransId);
                 }
                 else
                 {
-                    return (responseData.ReturnCode, responseData.ReturnMessage);
+                    return (responseData.ReturnCode, responseData.ZpTransId);
                 }
 
             }
             else
             {
-                return (0, response.ReasonPhrase ?? string.Empty);
+                return (0, 0);
             }
         }
     }

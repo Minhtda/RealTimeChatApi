@@ -29,9 +29,9 @@ namespace Application.Service
         public async Task<bool> AddMoneyToWallet()
         {
             int statusCode = ReturnTransactionStatus();
-            string key=_claimsService.ToString()+"_"+"Payment";
+            string key=_claimsService.GetCurrentUserId.ToString()+"_"+"Payment";
             Wallet foundWallet = await _unitOfWork.WalletRepository.FindWalletByUserId(_claimsService.GetCurrentUserId);
-            string apptransid = _cacheService.GetData<string>(_claimsService.GetCurrentUserId.ToString());
+            string apptransid = _cacheService.GetData<string>(key);
             long amount = _cacheService.GetData<long>(apptransid);
             if (statusCode > 0)
             {
@@ -42,7 +42,8 @@ namespace Application.Service
                         OwnerId = _claimsService.GetCurrentUserId,
                         UserBalance = amount,
                     };
-                    _cacheService.RemoveData(_claimsService.GetCurrentUserId.ToString());
+                   // _cacheService.RemoveData(key);
+                   // _cacheService.RemoveData(apptransid);
                     await _unitOfWork.WalletRepository.AddAsync(wallet);
                 }
                 else
@@ -76,16 +77,46 @@ namespace Application.Service
             }
             return paymentUrl;
         }
+
+        public async Task<bool> Refund()
+        {
+
+            var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(_claimsService.GetCurrentUserId);
+            if(wallet == null)
+            {
+                throw new Exception("Chưa nạp tiền vào ví");
+            }
+            string userId = _claimsService.GetCurrentUserId.ToString();
+            userId = userId.Replace("-", "");
+            string refundid= DateTime.UtcNow.ToString("yyMMdd")+"_"+ zaloPayConfig.AppId +"_"+ userId;
+            string zpKey= _claimsService.GetCurrentUserId.ToString() + "_" + "ZpTransId";
+            string key = _claimsService.GetCurrentUserId.ToString() + "_" + "Payment";
+            long zpTransId=_cacheService.GetData<long>(zpKey);
+            string apptransid = _cacheService.GetData<string>(key);
+            long amount = _cacheService.GetData<long>(apptransid);
+            var zaloPayRefundRequest = new CreateZaloPayRefundRequest(refundid, zaloPayConfig.AppId, zpTransId,amount, DateTime.UtcNow.GetTimeStamp(), "Refund");
+            zaloPayRefundRequest.MakeSignature(zaloPayConfig.Key1);
+            (bool createRefundResult, string refundMessage) = zaloPayRefundRequest.GetRefundLink(zaloPayConfig.RefundUrl);
+            if (createRefundResult)
+            {
+                wallet.UserBalance -= amount;
+            }
+            return createRefundResult;
+        }
+
         public int ReturnTransactionStatus()
         {
             int status = 0;
-            string apptransid = _cacheService.GetData<string>(_claimsService.GetCurrentUserId.ToString());
+            string key = _claimsService.GetCurrentUserId.ToString() + "_" + "Payment";
+            string zpKey=_claimsService.GetCurrentUserId.ToString()+ "_" + "ZpTransId";
+            string apptransid = _cacheService.GetData<string>(key);
             var zaloPayRequest = new CreateZaloPayRequest(zaloPayConfig.AppId, null, 0, 0, apptransid, null, null);
             zaloPayRequest.MakeSignatureForAppTransStatus(zaloPayConfig.Key1);
-            (int appTransStatus, string? appTransMessage) = zaloPayRequest.GetStatus(zaloPayConfig.AppTransStatusUrl);
+            (int appTransStatus, long zptransId) = zaloPayRequest.GetStatus(zaloPayConfig.AppTransStatusUrl);
             if (appTransStatus != 0)
             {
                 status = appTransStatus;
+                _cacheService.SetData<long>(zpKey, zptransId,DateTimeOffset.UtcNow.AddDays(2));
                 return status;
             }
             return status;
