@@ -21,10 +21,7 @@ namespace Infrastructure.Repository
             var posts = await GetAllAsync(
                 p => p.Product,
                 p => p.Product.Category,
-                p => p.Product.ConditionType,
-                p => p.Comments,
-                p => p.Comments.Select(c => c.User),
-                p => p.Comments.SelectMany(c => c.ReplyComments)
+                p => p.Product.ConditionType
             );
 
             return posts;

@@ -13,7 +13,6 @@ namespace Application.ViewModel.PostModel
         public string PostContent { get; set; }
         public Guid ProductId { get; set; }
         public ProductModel Product { get; set; }
-        public List<CommentModel> Comments { get; set; }
     }
 
     public class ProductModel
@@ -25,16 +24,5 @@ namespace Application.ViewModel.PostModel
         public string ConditionName { get; set; }
         public int? CategoryId { get; set; }
         public string CategoryName { get; set; }
-    }
-
-    public class CommentModel
-    {
-        public Guid CommentId { get; set; }
-        public string CommentContent { get; set; }
-        public Guid UserId { get; set; }
-        public string UserName { get; set; }
-        public Guid? ReplyCommentId { get; set; }
-        public CommentModel ParentComment { get; set; }
-        public List<CommentModel> ReplyComments { get; set; }
     }
 }

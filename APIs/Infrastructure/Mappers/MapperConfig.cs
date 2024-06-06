@@ -21,7 +21,6 @@ namespace Infrastructure.Mappers
             CreateProductMap();
             CreatePostMap();
             PostMap();
-            CommentMap();
             ProductMap();
             UpdatePostMap();
         }
@@ -49,15 +48,6 @@ namespace Infrastructure.Mappers
         {
             CreateMap<PostModel, Post>()
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(x => x.ProductId))
-                .ReverseMap();
-        }
-        internal void CommentMap()
-        {
-            CreateMap<Comment, CommentModel>()
-                .ForMember(dest => dest.CommentId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
-                .ForMember(dest => dest.ParentComment, opt => opt.MapFrom(src => src.ParentComment))
-                .ForMember(dest => dest.ReplyComments, opt => opt.MapFrom(src => src.ReplyComments))
                 .ReverseMap();
         }
 
