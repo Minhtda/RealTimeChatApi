@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.ViewModel.UserModel;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,6 +25,20 @@ namespace Infrastructure.Repository
         {
           User user= await _dbContext.Users.Include(x=>x.Role).FirstOrDefaultAsync(x=>x.Email==email);
           return user;
+        }
+
+        public async Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId)
+        {
+            var currentLoginUser=await GetByIdAsync(userId);
+            CurrentUserModel currentUserModel = new CurrentUserModel()
+            {
+                Username=currentLoginUser.UserName,
+                Email=currentLoginUser.Email,
+                Birthday=DateOnly.FromDateTime(currentLoginUser.BirthDay),
+                Fullname=currentLoginUser.FirstName+" "+currentLoginUser.LastName,
+                Phonenumber=currentLoginUser.PhoneNumber
+            };
+            return currentUserModel;
         }
     }
 }

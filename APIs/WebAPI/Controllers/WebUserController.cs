@@ -88,11 +88,23 @@ namespace WebAPI.Controllers
             }
             return BadRequest();
         }
+        [Authorize(Roles ="Admin")]
         [HttpGet]
         public async Task<IActionResult> GeAllUser()
         {
             List<User> user=await _userService.GetAllUserAsync();
             return Ok(user);
+        }
+        [Authorize(Roles ="Admin")]
+        [HttpPut]
+        public async Task<IActionResult> CreateModerator(Guid userId)
+        {
+            bool isPromoted=await _userService.PromoteUserToModerator(userId);
+            if (isPromoted)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
     }
 }

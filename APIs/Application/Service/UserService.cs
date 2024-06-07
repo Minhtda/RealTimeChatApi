@@ -246,5 +246,31 @@ namespace Application.Service
         {
             return await _unitOfWork.UserRepository.GetAllAsync();
         }
+
+        public async Task<bool> PromoteUserToModerator(Guid userId)
+        {
+            var foundUser= await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            if (foundUser == null)
+            {
+                throw new Exception("Cannot found user");
+            }
+            if (foundUser.RoleId == 2)
+            {
+                throw new Exception("User already a moderator");
+            }
+            else if(foundUser.RoleId == 1) 
+            {
+                throw new Exception("User is a admin");
+            }
+            foundUser.RoleId = 2;
+            _unitOfWork.UserRepository.Update(foundUser);
+           return  await _unitOfWork.SaveChangeAsync()>0;
+        }
+
+        public async Task<CurrentUserModel> GetCurrentLoginUser()
+        {
+            var currentLoginUser = await _unitOfWork.UserRepository.GetCurrentLoginUserAsync(_claimService.GetCurrentUserId);
+            return currentLoginUser;
+        }
     }
 }

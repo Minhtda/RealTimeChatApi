@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.ViewModel.UserModel;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Application.InterfaceRepository
     public interface IUserRepository:IGenericRepository<User>
     {
         Task<User> FindUserByEmail (string email);
+        Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId);
     }
 }
