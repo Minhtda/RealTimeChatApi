@@ -12,5 +12,6 @@ namespace Application.InterfaceRepository
     {
         Task<User> FindUserByEmail (string email);
         Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId);
+        Task UpdateUserAsync(User user);
     }
 }

@@ -26,7 +26,11 @@ namespace Infrastructure.Repository
           User user= await _dbContext.Users.Include(x=>x.Role).FirstOrDefaultAsync(x=>x.Email==email);
           return user;
         }
-
+        public async Task UpdateUserAsync(User user)
+        {
+            _dbSet.Update(user);
+            await _dbContext.SaveChangesAsync();
+        }
         public async Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId)
         {
             var currentLoginUser=await GetByIdAsync(userId);
@@ -40,5 +44,6 @@ namespace Infrastructure.Repository
             };
             return currentUserModel;
         }
+
     }
 }

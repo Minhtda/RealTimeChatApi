@@ -68,6 +68,7 @@ namespace Application.Service
             newAccount.RoleId = 3;
             newAccount.PasswordHash = registerModel.Password.Hash();
             (newAccount.FirstName, newAccount.LastName) = StringUtil.SplitName(registerModel.Fullname);
+            
             await _unitOfWork.UserRepository.AddAsync(newAccount);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -84,6 +85,7 @@ namespace Application.Service
                 throw new Exception("Password is not correct");
             }
             var findKey = user.Id.ToString() + "_" + apiOrigin;
+          
            /*string? loginData = _cacheService.GetData<string>(findKey);
             if (loginData!=null)
             {
