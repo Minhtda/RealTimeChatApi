@@ -22,5 +22,7 @@ namespace Application.InterfaceService
         Task<List<User>> GetAllUserAsync();
         Task<bool> UpdateUserProfileAsync(UpdateUserProfileModel updateUserProfileModel);
         Task<List<User>> GetAllUser();
+        Task<bool> PromoteUserToModerator(Guid userId);
+        Task<CurrentUserModel> GetCurrentLoginUser();
     }
 }

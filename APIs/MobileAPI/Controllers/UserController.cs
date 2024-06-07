@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Services;
 namespace MobileAPI.Controllers
 {
 
-    public class UserController :BaseController
+    public class UserController : BaseController
     {
         private readonly IUserService _userService;
         public UserController(IUserService userService)
@@ -19,9 +19,9 @@ namespace MobileAPI.Controllers
             _userService = userService;
         }
         [HttpPost]
-        public async Task<IActionResult>Register (RegisterModel registerModel)
+        public async Task<IActionResult> Register(RegisterModel registerModel)
         {
-            var isCreate=await _userService.CreateAccount(registerModel);
+            var isCreate = await _userService.CreateAccount(registerModel);
             if (!isCreate)
             {
                 return BadRequest();
@@ -34,17 +34,17 @@ namespace MobileAPI.Controllers
         /// <param name="loginModel"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Login(LoginModel loginModel) 
+        public async Task<IActionResult> Login(LoginModel loginModel)
         {
             string apiOrigin = "Mobile";
-            var newToken=await _userService.Login(loginModel, apiOrigin);
+            var newToken = await _userService.Login(loginModel, apiOrigin);
             return Ok(newToken);
         }
         [HttpGet]
-        public async Task<IActionResult> SendVerificationCode (string email)
+        public async Task<IActionResult> SendVerificationCode(string email)
         {
-            bool sendSuccess= await _userService.SendVerificationCodeToEmail(email);
-            if(sendSuccess)
+            bool sendSuccess = await _userService.SendVerificationCodeToEmail(email);
+            if (sendSuccess)
             {
                 return Ok();
             }
@@ -53,7 +53,7 @@ namespace MobileAPI.Controllers
         [HttpGet]
         public IActionResult CheckVerifyCode(string code)
         {
-            bool isCorrect=  _userService.CheckVerifyCode(code);
+            bool isCorrect = _userService.CheckVerifyCode(code);
             HttpContext.Session.SetString("verifycode", code);
             if (isCorrect)
             {
@@ -66,7 +66,7 @@ namespace MobileAPI.Controllers
         {
             string verifycode = HttpContext.Session.GetString("verifycode");
             HttpContext.Session.Clear();
-            bool isResetSuccess= await _userService.ResetPassword(verifycode,resetPasswordModel);
+            bool isResetSuccess = await _userService.ResetPassword(verifycode, resetPasswordModel);
             if (isResetSuccess)
             {
                 return Ok();
@@ -79,7 +79,7 @@ namespace MobileAPI.Controllers
         {
             string apiOrigin = "Mobile";
             bool isLogout = await _userService.Logout(apiOrigin);
-            if(isLogout)
+            if (isLogout)
             {
                 return Ok();
             }
@@ -90,7 +90,7 @@ namespace MobileAPI.Controllers
         {
             string apiOrigin = "Mobile";
             var newToken = await _userService.LoginGoogle(Token, apiOrigin);
-            if(newToken == null)
+            if (newToken == null)
             {
                 return BadRequest();
             }
@@ -112,18 +112,26 @@ namespace MobileAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUser()
         {
-            List<User> users= await _userService.GetAllUserAsync();
+            List<User> users = await _userService.GetAllUserAsync();
             return Ok(users);
         }
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateUser(UpdateUserProfileModel updateUserProfileModel)
         {
-            bool isUpdate=await _userService.UpdateUserProfileAsync(updateUserProfileModel);
+            bool isUpdate = await _userService.UpdateUserProfileAsync(updateUserProfileModel);
             if (isUpdate)
             {
                 return Ok();
             }
             return BadRequest();
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentLoginUser()
+        {
+            var user = await _userService.GetCurrentLoginUser();
+            return Ok(user);
         }
 
     }
