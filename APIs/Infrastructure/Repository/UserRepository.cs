@@ -31,6 +31,7 @@ namespace Infrastructure.Repository
             _dbSet.Update(user);
             await _dbContext.SaveChangesAsync();
         }
+
         public async Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId)
         {
             var currentLoginUser=await GetByIdAsync(userId);
@@ -38,7 +39,7 @@ namespace Infrastructure.Repository
             {
                 Username=currentLoginUser.UserName,
                 Email=currentLoginUser.Email,
-                Birthday=DateOnly.FromDateTime(currentLoginUser.BirthDay),
+                Birthday=DateOnly.FromDateTime((DateTime)currentLoginUser.BirthDay),
                 Fullname=currentLoginUser.FirstName+" "+currentLoginUser.LastName,
                 Phonenumber=currentLoginUser.PhoneNumber
             };

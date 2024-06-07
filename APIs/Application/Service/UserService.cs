@@ -29,8 +29,8 @@ namespace Application.Service
         private readonly ISendMailHelper _sendMailHelper;
         private readonly IClaimService _claimService;
         private readonly ICacheService _cacheService;
-        public UserService(IUnitOfWork unitOfWork,IMapper mapper,AppConfiguration appConfiguration,ICurrentTime currentTime
-            ,ISendMailHelper sendMailHelper,IClaimService claimService,ICacheService cacheService)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
+            , ISendMailHelper sendMailHelper, IClaimService claimService, ICacheService cacheService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -43,8 +43,8 @@ namespace Application.Service
 
         public bool CheckVerifyCode(string key)
         {
-            var email=  _cacheService.GetData<string>(key);
-            if(email == null)
+            var email = _cacheService.GetData<string>(key);
+            if (email == null)
             {
                 return false;
             }
@@ -53,8 +53,8 @@ namespace Application.Service
 
         public async Task<bool> CreateAccount(RegisterModel registerModel)
         {
-            var user =await _unitOfWork.UserRepository.FindUserByEmail(registerModel.Email);
-            if (user != null) 
+            var user = await _unitOfWork.UserRepository.FindUserByEmail(registerModel.Email);
+            if (user != null)
             {
                 throw new Exception("Email already exist");
             }
@@ -64,11 +64,11 @@ namespace Application.Service
                 throw new Exception("Invalid Birthday format. Please use 'yyyy-MM-dd' format.");
             }
             var newAccount = _mapper.Map<User>(registerModel);
-            newAccount.BirthDay= birthDay;
+            newAccount.BirthDay = birthDay;
             newAccount.RoleId = 3;
             newAccount.PasswordHash = registerModel.Password.Hash();
             (newAccount.FirstName, newAccount.LastName) = StringUtil.SplitName(registerModel.Fullname);
-            
+
             await _unitOfWork.UserRepository.AddAsync(newAccount);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
@@ -76,25 +76,25 @@ namespace Application.Service
         public async Task<Token> Login(LoginModel loginModel, string apiOrigin)
         {
             var user = await _unitOfWork.UserRepository.FindUserByEmail(loginModel.Email);
-            if (user==null)
+            if (user == null)
             {
                 throw new Exception("Email do not exist");
             }
-            if(!loginModel.Password.CheckPassword(user.PasswordHash))
+            if (!loginModel.Password.CheckPassword(user.PasswordHash))
             {
                 throw new Exception("Password is not correct");
             }
             var findKey = user.Id.ToString() + "_" + apiOrigin;
-          
-           /*string? loginData = _cacheService.GetData<string>(findKey);
-            if (loginData!=null)
-            {
-                throw new Exception("You already login");
-            }*/
+
+            /*string? loginData = _cacheService.GetData<string>(findKey);
+             if (loginData!=null)
+             {
+                 throw new Exception("You already login");
+             }*/
             var accessToken = user.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
             var refreshToken = RefreshToken.GetRefreshToken();
-            var key=user.Id.ToString()+ "_" + apiOrigin;
-            var cacheData = _cacheService.SetData<string>(key, refreshToken,_currentTime.GetCurrentTime().AddDays(2));
+            var key = user.Id.ToString() + "_" + apiOrigin;
+            var cacheData = _cacheService.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
             return new Token
             {
                 accessToken = accessToken,
@@ -105,8 +105,8 @@ namespace Application.Service
         public async Task<bool> Logout(string apiOrigin)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(_claimService.GetCurrentUserId);
-            string key= user.Id.ToString()+ "_" + apiOrigin;
-            bool isDelete= (bool)_cacheService.RemoveData(key);
+            string key = user.Id.ToString() + "_" + apiOrigin;
+            bool isDelete = (bool)_cacheService.RemoveData(key);
             return isDelete;
         }
 
@@ -153,11 +153,11 @@ namespace Application.Service
                     return false;
                 };
 
-               _cacheService.SetData(key, email, DateTimeOffset.Now.AddMinutes(10));
+                _cacheService.SetData(key, email, DateTimeOffset.Now.AddMinutes(10));
             }
             catch (Exception ex)
             {
-               throw ex;
+                throw ex;
             }
             return true;
         }
@@ -173,16 +173,28 @@ namespace Application.Service
                 var loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
                 if (loginUser == null)
                 {
-                    var newAcc = new User();
-                    newAcc.Email = email;
-                    newAcc.RoleId = 3;
-                    newAcc.IsDelete = false;
-                    newAcc.UserName = firstName + " " + lastName;
-                    newAcc.FirstName = firstName;
-                    newAcc.LastName = lastName;
+                    var newAcc = new User()
+                    {
+                        Email = email,
+                        RoleId = 3,
+                        IsDelete = false,
+                        UserName = firstName + " " + lastName,
+                        FirstName = firstName,
+                        LastName = lastName,
+                        PasswordHash = " ",
+                        PhoneNumber = " ",
+                        IsBuisnessAccount = false,
+                        WalletId = new Guid(),
+                    };
                     await _unitOfWork.UserRepository.AddAsync(newAcc);
                     await _unitOfWork.SaveChangeAsync();
                     loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
+                    var VerifyUserId = await CreateVerifyUser(loginUser.Id);
+                    var WalletId = await CreateWallet(loginUser.Id);
+                    loginUser.WalletId = WalletId;
+                    loginUser.VerifyUserId = VerifyUserId;
+                    await _unitOfWork.UserRepository.UpdateUserAsync(loginUser);
+                    await _unitOfWork.SaveChangeAsync();
                 }
                 var accessToken = loginUser.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
                 var refreshToken = RefreshToken.GetRefreshToken();
@@ -208,12 +220,12 @@ namespace Application.Service
 
         public async Task<bool> BanUser(Guid userId)
         {
-            var user= await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
             if (user == null)
             {
                 throw new Exception("User cannot be found");
             }
-            if(user.Role.RoleName==nameof(RoleName.Admin))
+            if (user.Role.RoleName == nameof(RoleName.Admin))
             {
                 throw new Exception("You cannot ban this user");
             }
@@ -223,12 +235,12 @@ namespace Application.Service
 
         public async Task<List<User>> GetAllUserAsync()
         {
-          List<User> users = await _unitOfWork.UserRepository.GetAllAsync();
-           if(users == null)
+            List<User> users = await _unitOfWork.UserRepository.GetAllAsync();
+            if (users == null)
             {
                 throw new Exception("Error in getting user");
             }
-           return users;
+            return users;
         }
 
         public async Task<bool> UpdateUserProfileAsync(UpdateUserProfileModel updateUserProfileModel)
@@ -238,7 +250,7 @@ namespace Application.Service
             {
                 throw new Exception("Cannot find user");
             }
-             _mapper.Map(updateUserProfileModel,findUser,typeof(UpdateUserProfileModel),typeof(User));
+            _mapper.Map(updateUserProfileModel, findUser, typeof(UpdateUserProfileModel), typeof(User));
             (findUser.FirstName, findUser.LastName) = StringUtil.SplitName(updateUserProfileModel.Fullname);
             _unitOfWork.UserRepository.Update(findUser);
             return await _unitOfWork.SaveChangeAsync() > 0;
@@ -248,10 +260,33 @@ namespace Application.Service
         {
             return await _unitOfWork.UserRepository.GetAllAsync();
         }
-
+        public async Task<Guid> CreateWallet(Guid userId)
+        {
+            Wallet newWallet = new Wallet()
+            {
+                OwnerId = userId,
+                UserBalance = 0,
+            };
+            await _unitOfWork.WalletRepository.AddAsync(newWallet);
+            await _unitOfWork.SaveChangeAsync();
+            var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(userId);
+            return wallet.Id;
+        }
+        public async Task<Guid> CreateVerifyUser(Guid userId)
+        {
+            VerifyUser newVerifyUser = new VerifyUser
+            {
+                UserId = userId,
+                IsStudentAccount = false
+            };
+            await _unitOfWork.VerifyUsersRepository.AddAsync(newVerifyUser);
+            await _unitOfWork.SaveChangeAsync();
+            var verifyUser = await _unitOfWork.WalletRepository.FindWalletByUserId(userId);
+            return verifyUser.Id;
+        }
         public async Task<bool> PromoteUserToModerator(Guid userId)
         {
-            var foundUser= await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            var foundUser = await _unitOfWork.UserRepository.GetByIdAsync(userId);
             if (foundUser == null)
             {
                 throw new Exception("Cannot found user");
@@ -260,13 +295,13 @@ namespace Application.Service
             {
                 throw new Exception("User already a moderator");
             }
-            else if(foundUser.RoleId == 1) 
+            else if (foundUser.RoleId == 1)
             {
                 throw new Exception("User is a admin");
             }
             foundUser.RoleId = 2;
             _unitOfWork.UserRepository.Update(foundUser);
-           return  await _unitOfWork.SaveChangeAsync()>0;
+            return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
         public async Task<CurrentUserModel> GetCurrentLoginUser()
@@ -274,5 +309,6 @@ namespace Application.Service
             var currentLoginUser = await _unitOfWork.UserRepository.GetCurrentLoginUserAsync(_claimService.GetCurrentUserId);
             return currentLoginUser;
         }
+
     }
 }

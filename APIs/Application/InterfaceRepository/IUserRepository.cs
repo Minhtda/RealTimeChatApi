@@ -11,7 +11,7 @@ namespace Application.InterfaceRepository
     public interface IUserRepository:IGenericRepository<User>
     {
         Task<User> FindUserByEmail (string email);
-        Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId);
         Task UpdateUserAsync(User user);
+        Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId);
     }
 }
