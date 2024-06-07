@@ -25,5 +25,10 @@ namespace Infrastructure.Repository
           User user= await _dbContext.Users.Include(x=>x.Role).FirstOrDefaultAsync(x=>x.Email==email);
           return user;
         }
+        public async Task UpdateUserAsync(User user)
+        {
+            _dbSet.Update(user);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

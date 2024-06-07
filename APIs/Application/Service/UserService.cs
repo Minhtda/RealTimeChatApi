@@ -171,16 +171,28 @@ namespace Application.Service
                 var loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
                 if (loginUser == null)
                 {
-                    var newAcc = new User();
-                    newAcc.Email = email;
-                    newAcc.RoleId = 3;
-                    newAcc.IsDelete = false;
-                    newAcc.UserName = firstName + " " + lastName;
-                    newAcc.FirstName = firstName;
-                    newAcc.LastName = lastName;
+                    var newAcc = new User()
+                    {
+                        Email = email,
+                        RoleId = 3,
+                        IsDelete = false,
+                        UserName = firstName + " " + lastName,
+                        FirstName = firstName,
+                        LastName = lastName,
+                        PasswordHash = " ",
+                        PhoneNumber = " ",
+                        IsBuisnessAccount = false,
+                        WalletId = new Guid(),
+                    };
                     await _unitOfWork.UserRepository.AddAsync(newAcc);
                     await _unitOfWork.SaveChangeAsync();
                     loginUser = await _unitOfWork.UserRepository.FindUserByEmail(email);
+                    var VerifyUserId = await CreateVerifyUser(loginUser.Id);
+                    var WalletId = await CreateWallet(loginUser.Id);
+                    loginUser.WalletId = WalletId;
+                    loginUser.VerifyUserId = VerifyUserId;
+                    await _unitOfWork.UserRepository.UpdateUserAsync(loginUser);
+                    await _unitOfWork.SaveChangeAsync();
                 }
                 var accessToken = loginUser.GenerateTokenString(_appConfiguration!.JWTSecretKey, _currentTime.GetCurrentTime());
                 var refreshToken = RefreshToken.GetRefreshToken();
@@ -245,6 +257,30 @@ namespace Application.Service
         public async Task<List<User>> GetAllUser()
         {
             return await _unitOfWork.UserRepository.GetAllAsync();
+        }
+        public async Task<Guid> CreateWallet(Guid userId)
+        {
+            Wallet newWallet = new Wallet()
+            {
+                OwnerId = userId,
+                UserBalance = 0,
+            };
+            await _unitOfWork.WalletRepository.AddAsync(newWallet);
+            await _unitOfWork.SaveChangeAsync();
+            var wallet = await _unitOfWork.WalletRepository.FindWalletByUserId(userId);
+            return wallet.Id;
+        }
+        public async Task<Guid> CreateVerifyUser(Guid userId)
+        {
+            VerifyUser newVerifyUser = new VerifyUser
+            {
+                UserId = userId,
+                IsStudentAccount = false
+            };
+            await _unitOfWork.VerifyUsersRepository.AddAsync(newVerifyUser);
+            await _unitOfWork.SaveChangeAsync();
+            var verifyUser = await _unitOfWork.WalletRepository.FindWalletByUserId(userId);
+            return verifyUser.Id;
         }
     }
 }

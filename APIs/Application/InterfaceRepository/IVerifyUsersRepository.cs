@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Application.InterfaceRepository
 {
-    public interface IUserRepository:IGenericRepository<User>
+    public interface IVerifyUsersRepository : IGenericRepository<VerifyUser>
     {
-        Task<User> FindUserByEmail (string email);
-        Task UpdateUserAsync(User user);
+        Task<VerifyUser> FindVerifyUserIdByUserId(Guid userId);
     }
 }

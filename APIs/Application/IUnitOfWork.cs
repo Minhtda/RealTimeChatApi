@@ -14,6 +14,7 @@ namespace Application
         public IPostRepository PostRepository { get;}
         public IProductRepository ProductRepository { get;}
         public IWalletRepository WalletRepository { get;}
+        public IVerifyUsersRepository VerifyUsersRepository { get;}
         public Task<int> SaveChangeAsync();
     }
 }
