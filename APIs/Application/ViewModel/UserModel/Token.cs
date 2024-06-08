@@ -8,6 +8,7 @@ namespace Application.ViewModel.UserViewModel
 {
     public class Token
     {
+        public string userName { get; set; }
         public string accessToken {  get; set; }
         public string refreshToken {  get; set; }
     }

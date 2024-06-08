@@ -97,6 +97,7 @@ namespace Application.Service
             var cacheData = _cacheService.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
             return new Token
             {
+                userName=user.UserName,
                 accessToken = accessToken,
                 refreshToken = refreshToken,
             };
