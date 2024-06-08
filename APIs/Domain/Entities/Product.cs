@@ -13,7 +13,6 @@ namespace Domain.Entities
         public long ProductPrice { get; set; }
         public int? ConditionId { get; set; }
         public ExchangeCondition ConditionType { get; set; }
-        public Guid? PostId { get; set; }
         public Post Post { get; set; }
         public int? CategoryId { get; set; }
         public Category Category { get; set; }

@@ -46,5 +46,9 @@ namespace Infrastructure.Repository
             return currentUserModel;
         }
 
+        public Task<Guid> GetLastSaveUserId()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
