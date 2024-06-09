@@ -48,7 +48,7 @@ namespace Infrastructure.Repository
             {
                 Username=x.UserName,
                 Email=x.Email,  
-                Birthday=DateOnly.FromDateTime(x.BirthDay.Value),
+                Birthday=x.BirthDay.HasValue?DateOnly.FromDateTime(x.BirthDay.Value):null,
                 Fullname=x.FirstName+" "+x.LastName,
                 Phonenumber=x.PhoneNumber
             }).SingleOrDefaultAsync();
