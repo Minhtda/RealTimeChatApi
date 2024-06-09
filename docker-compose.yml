@@ -13,6 +13,7 @@ services:
         - capstone-api-network
      ports:
         - 1431:1433
+     mem_limit: 1.5g
  cachedb:
       container_name: cachedb
       image: redis:latest
