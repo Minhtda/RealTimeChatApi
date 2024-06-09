@@ -70,7 +70,7 @@ namespace Application.Service
             (newAccount.FirstName, newAccount.LastName) = StringUtil.SplitName(registerModel.Fullname);
 
             await _unitOfWork.UserRepository.AddAsync(newAccount);
-            return await _unitOfWork.SaveChangeAsync() > 0;
+            return await _unitOfWork.SaveChangeAsync()>0;
         }
 
         public async Task<Token> Login(LoginModel loginModel, string apiOrigin)
@@ -95,6 +95,22 @@ namespace Application.Service
             var refreshToken = RefreshToken.GetRefreshToken();
             var key = user.Id.ToString() + "_" + apiOrigin;
             var cacheData = _cacheService.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
+            var findUserWallet=await _unitOfWork.WalletRepository.FindWalletByUserId(user.Id);
+            var checkVerifyUser=await _unitOfWork.VerifyUsersRepository.FindVerifyUserIdByUserId(user.Id);
+            if (findUserWallet == null)
+            {
+                var walletId = await CreateWallet(user.Id);
+                user.WalletId = walletId;
+                _unitOfWork.UserRepository.Update(user);
+                await _unitOfWork.SaveChangeAsync();
+            }
+            if(checkVerifyUser == null)
+            {
+                var verfiyUserId=await CreateVerifyUser(user.Id);
+                user.VerifyUserId = verfiyUserId;
+                _unitOfWork.UserRepository.Update(user);
+                await _unitOfWork.SaveChangeAsync();
+            }
             return new Token
             {
                 userName=user.UserName,
@@ -203,6 +219,7 @@ namespace Application.Service
                 var cacheData = _cacheService.SetData<string>(key, refreshToken, _currentTime.GetCurrentTime().AddDays(2));
                 return new Token
                 {
+                    userName=loginUser.UserName,
                     accessToken = accessToken,
                     refreshToken = refreshToken,
                 };
