@@ -34,16 +34,24 @@ namespace Infrastructure.Repository
 
         public async Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId)
         {
-            var currentLoginUser=await GetByIdAsync(userId);
-            CurrentUserModel currentUserModel = new CurrentUserModel()
+            /*  var currentLoginUser=await GetByIdAsync(userId);
+              CurrentUserModel currentUserModel = new CurrentUserModel()
+              {
+                  Username=currentLoginUser.UserName,
+                  Email=currentLoginUser.Email,
+                  Birthday=DateOnly.FromDateTime((DateTime)currentLoginUser.BirthDay),
+                  Fullname=currentLoginUser.FirstName+" "+currentLoginUser.LastName,
+                  Phonenumber=currentLoginUser.PhoneNumber
+              };
+              return currentUserModel;*/
+            return await _dbContext.Users.Where(x => x.Id == userId).Select(x => new CurrentUserModel
             {
-                Username=currentLoginUser.UserName,
-                Email=currentLoginUser.Email,
-                Birthday=DateOnly.FromDateTime((DateTime)currentLoginUser.BirthDay),
-                Fullname=currentLoginUser.FirstName+" "+currentLoginUser.LastName,
-                Phonenumber=currentLoginUser.PhoneNumber
-            };
-            return currentUserModel;
+                Username=x.UserName,
+                Email=x.Email,  
+                Birthday=DateOnly.FromDateTime(x.BirthDay.Value),
+                Fullname=x.FirstName+" "+x.LastName,
+                Phonenumber=x.PhoneNumber
+            }).SingleOrDefaultAsync();
         }
 
         public Task<Guid> GetLastSaveUserId()
