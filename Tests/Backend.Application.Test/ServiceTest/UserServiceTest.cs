@@ -58,12 +58,15 @@ namespace Backend.Application.Test.ServiceTest
         {
             //Arrange
             var mockUser= _fixture.Build<User>().Create();
+            var mockWallet = _fixture.Build<Wallet>().With(w => w.OwnerId,mockUser.Id).Create();
+            var mockVerifyUser=_fixture.Build<VerifyUser>().With(v=>v.UserId,mockUser.Id).Create();
             var loginDTO = new LoginModel { Email = mockUser.Email, Password = mockUser.PasswordHash };
             mockUser.PasswordHash = mockUser.PasswordHash.Hash();
             _unitOfWorkMock.Setup(unit => unit.UserRepository.FindUserByEmail(mockUser.Email)).ReturnsAsync(mockUser);
             _unitOfWorkMock.Setup(unit => unit.UserRepository.Update(mockUser)).Verifiable();
             _unitOfWorkMock.Setup(unit=>unit.SaveChangeAsync()).ReturnsAsync(1);
-            
+            _unitOfWorkMock.Setup(unit=>unit.WalletRepository.FindWalletByUserId(mockUser.Id)).ReturnsAsync(mockWallet);
+            _unitOfWorkMock.Setup(unit => unit.VerifyUsersRepository.FindVerifyUserIdByUserId(mockUser.Id)).ReturnsAsync(mockVerifyUser);
             _appConfiguration.SetupAllProperties();
             _appConfiguration.Object.JWTSecretKey = "Testtetsttetstetstetetstettsttxtttwtsttwtefdwqw";
             //Act
