@@ -21,7 +21,7 @@ namespace WebAPI.Controllers
             return Ok(products);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromForm]CreateProductModel product)
+        public async Task<IActionResult> CreateProduct([FromForm]CreatePostViewModel product)
         {
             bool isCreate = await _productService.CreateProduct(product);
             if (isCreate)
