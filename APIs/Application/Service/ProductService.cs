@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceService;
 using Application.Util;
+using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using AutoMapper;
 using Domain.Entities;
@@ -30,13 +31,22 @@ namespace Application.Service
 
        
 
-        public async Task<bool> CreateProduct(CreateProductModel product)
+        public async Task<bool> CreateProduct(CreatePostViewModel postModel)
         {
-            var imageUrl = await _uploadFile.UploadFileToFireBase(product.ProductImage);
-            var newProduct=_mapper.Map<Product>(product);
+            var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage);
+            var newProduct=_mapper.Map<Product>(postModel.productModel);
             newProduct.ProductImageUrl = imageUrl;
             await _unitOfWork.ProductRepository.AddAsync(newProduct);
-            return await _unitOfWork.SaveChangeAsync()>0;
+            await _unitOfWork.SaveChangeAsync();
+            var createPost = new CreatePostModel()
+            {
+                PostContent = postModel.PostContent,
+                PostTitle = postModel.PostTitle,
+                ProductId = newProduct.Id
+            };
+            var newPost = _mapper.Map<Post>(createPost);
+            await _unitOfWork.PostRepository.AddAsync(newPost);
+            return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
         public async Task<bool> DeleteProduct(Guid productId)

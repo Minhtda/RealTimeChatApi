@@ -11,7 +11,7 @@ namespace Application.InterfaceService
 {
     public interface IProductService
     {
-        Task<bool> CreateProduct(CreateProductModel product);
+        Task<bool> CreateProduct(CreatePostViewModel product);
         Task<bool> UpdateProduct(Product product);
         Task<bool> DeleteProduct(Guid productId);
         Task<List<Product>> GetAllProducts();   

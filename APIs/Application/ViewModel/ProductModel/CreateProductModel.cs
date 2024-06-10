@@ -16,4 +16,10 @@ namespace Application.ViewModel.ProductModel
         public int ProductTypeId { get; set; }
        
     }
+    public class CreatePostViewModel
+    {
+        public string PostTitle { get; set; }
+        public string PostContent { get; set; }
+        public CreateProductModel productModel { get; set; }
+    }
 }
