@@ -133,6 +133,17 @@ namespace MobileAPI.Controllers
             var user = await _userService.GetCurrentLoginUser();
             return Ok(user);
         }
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> UpdatePassword(UpdatePasswordModel updatePasswordModel)
+        {
+            bool updatePassword=await _userService.UpdatePasswordAsync(updatePasswordModel);
+            if (!updatePassword)
+            {
+                return BadRequest();
+            }
+            return Ok();
+        }
 
     }
 }

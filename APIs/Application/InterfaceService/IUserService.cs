@@ -24,5 +24,6 @@ namespace Application.InterfaceService
         Task<List<User>> GetAllUser();
         Task<bool> PromoteUserToModerator(Guid userId);
         Task<CurrentUserModel> GetCurrentLoginUser();
+        Task<bool> UpdatePasswordAsync(UpdatePasswordModel updatePasswordModel);
     }
 }

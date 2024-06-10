@@ -23,8 +23,10 @@ namespace Infrastructure.Repository
 
         public async Task<User> FindUserByEmail(string email)
         {
-          User user= await _dbContext.Users.Include(x=>x.Role).FirstOrDefaultAsync(x=>x.Email==email);
-          return user;
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+            User user= await _dbContext.Users.Include(x=>x.Role).FirstOrDefaultAsync(x=>x.Email==email);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+            return user;
         }
         public async Task UpdateUserAsync(User user)
         {
@@ -34,24 +36,16 @@ namespace Infrastructure.Repository
 
         public async Task<CurrentUserModel> GetCurrentLoginUserAsync(Guid userId)
         {
-            /*  var currentLoginUser=await GetByIdAsync(userId);
-              CurrentUserModel currentUserModel = new CurrentUserModel()
-              {
-                  Username=currentLoginUser.UserName,
-                  Email=currentLoginUser.Email,
-                  Birthday=DateOnly.FromDateTime((DateTime)currentLoginUser.BirthDay),
-                  Fullname=currentLoginUser.FirstName+" "+currentLoginUser.LastName,
-                  Phonenumber=currentLoginUser.PhoneNumber
-              };
-              return currentUserModel;*/
+#pragma warning disable CS8603 // Possible null reference return.
             return await _dbContext.Users.Where(x => x.Id == userId).Select(x => new CurrentUserModel
             {
                 Username=x.UserName,
                 Email=x.Email,  
                 Birthday=x.BirthDay.HasValue?DateOnly.FromDateTime(x.BirthDay.Value):null,
-                Fullname=x.FirstName+" "+x.LastName,
+                Fullname = x.FirstName + " " + x.LastName,
                 Phonenumber=x.PhoneNumber
             }).SingleOrDefaultAsync();
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public Task<Guid> GetLastSaveUserId()

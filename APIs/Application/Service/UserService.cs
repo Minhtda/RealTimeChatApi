@@ -328,5 +328,16 @@ namespace Application.Service
             return currentLoginUser;
         }
 
+        public async Task<bool> UpdatePasswordAsync(UpdatePasswordModel updatePasswordModel)
+        {
+            var loginUser=await _unitOfWork.UserRepository.GetByIdAsync(_claimService.GetCurrentUserId);
+            if (!updatePasswordModel.OldPassword.CheckPassword(loginUser.PasswordHash))
+            {
+                throw new Exception("Password incorrect");
+            }
+            loginUser.PasswordHash=  updatePasswordModel.NewPassword.Hash();
+            _unitOfWork.UserRepository.Update(loginUser);
+            return await _unitOfWork.SaveChangeAsync() > 0;
+        }
     }
 }
