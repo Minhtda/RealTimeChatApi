@@ -17,7 +17,7 @@ namespace Backend.Application.Test.ServiceTest
         private IPostService _postService;
         public PostServiceTest()
         {
-            _postService=new PostService(_unitOfWorkMock.Object,_mapper,_appConfiguration.Object,_currentTimeMock.Object,_claimServiceMock.Object);
+            _postService=new PostService(_unitOfWorkMock.Object,_mapper,_appConfiguration.Object,_currentTimeMock.Object,_claimServiceMock.Object,_uploadFileMock.Object);
         }
         [Fact]
         public async Task BanPost_ShouldReturnCorrect()

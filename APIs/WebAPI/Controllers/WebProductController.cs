@@ -20,7 +20,7 @@ namespace WebAPI.Controllers
             List<Product> products = await _productService.GetAllProducts();
             return Ok(products);
         }
-        [HttpPost]
+      /*  [HttpPost]
         public async Task<IActionResult> CreateProduct([FromForm]CreatePostViewModel product)
         {
             bool isCreate = await _productService.CreateProduct(product);
@@ -29,7 +29,7 @@ namespace WebAPI.Controllers
                 return Ok();
             }
             return BadRequest();
-        }
+        }*/
         [HttpPut]
         public async Task<IActionResult> UpdateProduct(Product product)
         {

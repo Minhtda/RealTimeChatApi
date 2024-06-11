@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.InterfaceRepository
 {
-    public interface IExchangeConditionRepository :IGenericRepository<ExchangeCondition>
+    public interface IExchangeConditionRepository 
     {
     }
 }
