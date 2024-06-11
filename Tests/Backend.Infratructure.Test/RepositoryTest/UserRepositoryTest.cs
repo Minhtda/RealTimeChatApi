@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceRepository;
+using Application.ViewModel.UserModel;
 using AutoFixture;
 using Backend.Domain.Test;
 using Domain.Entities;
@@ -32,6 +33,25 @@ namespace Backend.Infratructure.Test.RepositoryTest
             var user = await _userRepository.FindUserByEmail(mockUserData.Email);
             Assert.True(user != null);
             user.Id.Should().Be(mockUserData.Id);
+        }
+        [Fact]
+        public async Task GetCurrentUser_ShouldReturnCorrectData()
+        {
+            //Arrange
+            var mockUser=_fixture.Build<User>().Create();
+            var getCurrentUserMock=_fixture.Build<CurrentUserModel>()
+                .With(x=>x.Phonenumber,mockUser.PhoneNumber)
+                .With(x=>x.Birthday,DateOnly.FromDateTime(mockUser.BirthDay.Value))
+                .With(x=>x.Email,mockUser.Email)
+                .With(x=>x.Fullname,mockUser.FirstName+" "+mockUser.LastName)
+                .Create();
+                
+            //Act
+           await _dbContext.AddAsync(mockUser);
+           await _dbContext.SaveChangesAsync();
+           var result= await _userRepository.GetCurrentLoginUserAsync(mockUser.Id);
+           //Assert
+           result.Email.Should().Be(getCurrentUserMock.Email); 
         }
     }
 }

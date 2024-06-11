@@ -47,10 +47,5 @@ namespace Infrastructure.Repository
             }).SingleOrDefaultAsync();
 #pragma warning restore CS8603 // Possible null reference return.
         }
-
-        public Task<Guid> GetLastSaveUserId()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

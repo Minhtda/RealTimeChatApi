@@ -36,8 +36,10 @@ namespace Backend.Infratructure.Test
         {
             var userRepositoryResolved = _serviceProvider.GetRequiredService<IUserRepository>();
             var postRepositoryResolved= _serviceProvider.GetRequiredService<IPostRepository>();
+            var productRepositoryResolved=_serviceProvider.GetRequiredService<IProductRepository>();
             userRepositoryResolved.GetType().Should().Be(typeof(UserRepository));
             postRepositoryResolved.GetType().Should().Be(typeof (PostRepository));
+            productRepositoryResolved.GetType().Should().Be(typeof(ProductRepository)); 
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Application.InterfaceService;
 using Application.Service;
 using Application.Util;
+using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
 using AutoFixture;
 using Backend.Domain.Test;
@@ -187,6 +188,34 @@ namespace Backend.Application.Test.ServiceTest
             _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
             //Assert
             Assert.ThrowsAsync<Exception>(async () => await _userService.BanUser(Guid.NewGuid()));
+        }
+        [Fact]
+        public async Task UpdatePassword_ShouldReturnCorrect()
+        {
+            //Arrange 
+           
+            var updatePasswordDTO=_fixture.Build<UpdatePasswordModel>().With(x=>x.OldPassword,"OldPassword").Create();
+            var user=_fixture.Build<User>().With(x=>x.PasswordHash,updatePasswordDTO.OldPassword.Hash()).Create();
+            _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(user.Id);  
+            //Act
+            _unitOfWorkMock.Setup(unit=>unit.UserRepository.AddAsync(user)).Verifiable(Times.Once());
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            _unitOfWorkMock.Setup(unit => unit.SaveChangeAsync()).ReturnsAsync(1);
+            bool isUpdated = await _userService.UpdatePasswordAsync(updatePasswordDTO);
+            //Assert
+            Assert.True(isUpdated);
+        }
+        [Fact]
+        public async Task UpdatePassword_ShouldReturnException()
+        {
+            //Arrange 
+            var updatePasswordDTO = _fixture.Build<UpdatePasswordModel>().With(x => x.OldPassword, "OldPassword").Create();
+            var user = _fixture.Build<User>().Create();
+            _claimServiceMock.Setup(claim => claim.GetCurrentUserId).Returns(user.Id);
+            //Act
+            _unitOfWorkMock.Setup(unit => unit.UserRepository.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            //Assert
+            Assert.ThrowsAsync<Exception>(async()=> await _userService.UpdatePasswordAsync(updatePasswordDTO)) ;
         }
     }
 }
