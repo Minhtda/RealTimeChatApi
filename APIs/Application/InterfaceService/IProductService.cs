@@ -1,4 +1,5 @@
-﻿using Application.ViewModel.ProductModel;
+﻿using Application.ViewModel.PostModel;
+using Application.ViewModel.ProductModel;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -11,7 +12,7 @@ namespace Application.InterfaceService
 {
     public interface IProductService
     {
-        Task<bool> CreateProduct(CreatePostViewModel product);
+        Task<bool> CreateProduct(CreatePostModel postModel);
         Task<bool> UpdateProduct(Product product);
         Task<bool> DeleteProduct(Guid productId);
         Task<List<Product>> GetAllProducts();   

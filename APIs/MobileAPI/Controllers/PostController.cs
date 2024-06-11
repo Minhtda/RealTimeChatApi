@@ -1,4 +1,5 @@
 ﻿using Application.InterfaceService;
+using Application.Service;
 using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using Domain.Entities;
@@ -20,7 +21,7 @@ namespace MobileAPI.Controllers
             return Ok(posts);
         }
         [HttpPost]
-        public async Task<IActionResult> CreatePost(CreatePostModel post)
+        public async Task<IActionResult> CreatePost([FromForm] CreatePostModel post)
         {
             bool isCreate = await _postService.CreatePost(post);
             if (isCreate)

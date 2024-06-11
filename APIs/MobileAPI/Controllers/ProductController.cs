@@ -1,5 +1,6 @@
 ﻿using Application.InterfaceRepository;
 using Application.InterfaceService;
+using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +24,7 @@ namespace MobileAPI.Controllers
             return Ok(products);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromForm]CreatePostViewModel product) 
+        public async Task<IActionResult> CreateProduct([FromForm]CreatePostModel product) 
         {
             bool isCreate=await _productService.CreateProduct(product);
             if (isCreate)

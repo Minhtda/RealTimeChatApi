@@ -31,21 +31,20 @@ namespace Application.Service
 
        
 
-        public async Task<bool> CreateProduct(CreatePostViewModel postModel)
+        public async Task<bool> CreateProduct(CreatePostModel postModel)
         {
             var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage);
             var newProduct=_mapper.Map<Product>(postModel.productModel);
             newProduct.ProductImageUrl = imageUrl;
             await _unitOfWork.ProductRepository.AddAsync(newProduct);
             await _unitOfWork.SaveChangeAsync();
-            var createPost = new CreatePostModel()
+            var createPost = new Post
             {
-                PostContent = postModel.PostContent,
                 PostTitle = postModel.PostTitle,
-                ProductId = newProduct.Id
+                PostContent = postModel.PostContent,
+                Product = newProduct
             };
-            var newPost = _mapper.Map<Post>(createPost);
-            await _unitOfWork.PostRepository.AddAsync(newPost);
+            await _unitOfWork.PostRepository.AddAsync(createPost);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 

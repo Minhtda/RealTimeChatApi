@@ -8,6 +8,7 @@ using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,9 +21,11 @@ namespace Application.Service
         private readonly AppConfiguration _appConfiguration;
         private readonly ICurrentTime _currentTime;
         private readonly IClaimService _claimService;
+        private readonly IUploadFile _uploadFile;
         public PostService(IUnitOfWork unitOfWork, IMapper mapper, AppConfiguration appConfiguration, ICurrentTime currentTime
-            ,  IClaimService claimService)
+            ,  IClaimService claimService, IUploadFile uploadFile)
         {
+            _uploadFile = uploadFile;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _appConfiguration = appConfiguration;
@@ -40,10 +43,20 @@ namespace Application.Service
             return await _unitOfWork.SaveChangeAsync()>0;
         }
 
-        public async Task<bool> CreatePost(CreatePostModel Post)
+        public async Task<bool> CreatePost(CreatePostModel postModel)
         {
-            var newPost = _mapper.Map<Post>(Post);
-            await _unitOfWork.PostRepository.AddAsync(newPost);
+            var imageUrl = await _uploadFile.UploadFileToFireBase(postModel.productModel.ProductImage);
+            var newProduct = _mapper.Map<Product>(postModel.productModel);
+            newProduct.ProductImageUrl = imageUrl;
+            await _unitOfWork.ProductRepository.AddAsync(newProduct);
+            await _unitOfWork.SaveChangeAsync();
+            var createPost = new Post
+            {
+                PostTitle = postModel.PostTitle,
+                PostContent = postModel.PostContent,
+                Product = newProduct
+            };
+            await _unitOfWork.PostRepository.AddAsync(createPost);
             return await _unitOfWork.SaveChangeAsync() > 0;
         }
 
