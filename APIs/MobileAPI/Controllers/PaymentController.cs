@@ -14,10 +14,10 @@ namespace MobileAPI.Controllers
         }
         [Authorize]
         [HttpGet]
-        public IActionResult GetPaymentUrl() 
+        public IActionResult GetPaymentUrl()
         {
-            var payemntUrl= _paymentService.GetPayemntUrl();
-            if (payemntUrl == null || payemntUrl.Equals("")) 
+            var payemntUrl = _paymentService.GetPayemntUrl();
+            if (payemntUrl == null || payemntUrl.Equals(""))
             {
                 return BadRequest(payemntUrl);
             }
@@ -35,8 +35,8 @@ namespace MobileAPI.Controllers
             return BadRequest(paymentStatus);
         }*/
         [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> AddUserBalance() 
+        [HttpPost]
+        public async Task<IActionResult> AddUserBalance()
         {
             bool isAdded = await _paymentService.AddMoneyToWallet();
             if (isAdded)
@@ -46,13 +46,24 @@ namespace MobileAPI.Controllers
             return BadRequest();
         }
         [Authorize]
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> UserRefund()
         {
-            bool refundResult=await _paymentService.Refund();
-            if(refundResult)
+            bool refundResult = await _paymentService.Refund();
+            if (refundResult)
             {
                 return Ok(refundResult);
+            }
+            return BadRequest();
+        }
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetPaymentStatus()
+        {
+            int paymentStatus = _paymentService.ReturnTransactionStatus();
+            if (paymentStatus > 0)
+            {
+                return Ok();
             }
             return BadRequest();
         }
