@@ -65,14 +65,21 @@ namespace Application.Service
             string paymentUrl = "";
             long amount=50000;
             string key=_claimsService.GetCurrentUserId.ToString()+"_"+"Payment";
+            string keyForCount=_claimsService.GetCurrentUserId.ToString()+"_"+"Count";
+            int count = _cacheService.GetData<int>(keyForCount);
+            if(count!=null)
+            {
+                count++;
+            }
             var zaloPayRequest = new CreateZaloPayRequest(zaloPayConfig.AppId, zaloPayConfig.AppUser, DateTime.UtcNow.GetTimeStamp()
-                , amount, DateTime.UtcNow.ToString("yyMMdd") + "_" + _claimsService.GetCurrentUserId.ToString(), "zalopayapp", "ZaloPay demo");
+                , amount, DateTime.UtcNow.ToString("yyMMdd") + "_" + _claimsService.GetCurrentUserId.ToString()+count.ToString(), "zalopayapp", "ZaloPay demo");
             zaloPayRequest.MakeSignature(zaloPayConfig.Key1);
             (bool createZaloPayLinkResult, string? createZaloPayMessage) = zaloPayRequest.GetLink(zaloPayConfig.PaymentUrl);
             if (createZaloPayLinkResult)
             {
                 _cacheService.SetData<string>(key, zaloPayRequest.AppTransId, DateTimeOffset.UtcNow.AddHours(20));
                 _cacheService.SetData<long>(zaloPayRequest.AppTransId, amount, DateTimeOffset.UtcNow.AddDays(2));
+                _cacheService.SetData<int>(keyForCount, count, DateTimeOffset.UtcNow.AddHours(20));
                 paymentUrl = createZaloPayMessage;
             }
             return paymentUrl;
@@ -100,6 +107,8 @@ namespace Application.Service
             if (createRefundResult)
             {
                 wallet.UserBalance -= amount;
+                _cacheService.RemoveData(key);
+                _cacheService.RemoveData(zpKey);
             }
             return createRefundResult;
         }

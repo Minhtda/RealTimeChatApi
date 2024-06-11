@@ -17,7 +17,7 @@ namespace MobileAPI.Controllers
         public IActionResult GetPaymentUrl() 
         {
             var payemntUrl= _paymentService.GetPayemntUrl();
-            if (payemntUrl == null)
+            if (payemntUrl == null || payemntUrl.Equals("")) 
             {
                 return BadRequest(payemntUrl);
             }
