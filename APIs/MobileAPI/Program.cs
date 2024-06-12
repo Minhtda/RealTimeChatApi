@@ -6,6 +6,7 @@ using Infrastructure.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using MobileAPI;
+using MobileAPI.Hubs;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
@@ -33,6 +34,7 @@ opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     BearerFormat = "JWT",
     Scheme = "bearer"
 });
+
 opt.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
             {
@@ -52,6 +54,8 @@ opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     opt.IncludeXmlComments(xmlPath);
     opt.SchemaFilter<RegisterSchemaFilter>();
 });
+
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -83,5 +87,7 @@ app.UseSession();
 //app.UseRateLimiter();
 
 app.MapControllers();
+// Map the SignalR hub endpoint
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

@@ -1,4 +1,5 @@
-﻿using Application.ViewModel.PostModel;
+﻿using Application.ViewModel.MessageModel;
+using Application.ViewModel.PostModel;
 using Application.ViewModel.ProductModel;
 using Application.ViewModel.UserModel;
 using Application.ViewModel.UserViewModel;
@@ -23,6 +24,8 @@ namespace Infrastructure.Mappers
             PostMap();
             ProductMap();
             UpdatePostMap();
+            CreateMessageMap();
+            UpdateMessageMap();
         }
         internal void CreateUserMap()
         {
@@ -42,7 +45,6 @@ namespace Infrastructure.Mappers
         {
             CreateMap<CreatePostModel, Post>()
                 .ReverseMap();
-           
         }
         internal void PostMap()
         {
@@ -66,6 +68,17 @@ namespace Infrastructure.Mappers
         {
             CreateMap<UpdatePostModel, Post>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.PostId))
+                .ReverseMap();
+        }
+        internal void UpdateMessageMap()
+        {
+            CreateMap<UpdateMessageModel, Message>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.Id))
+                .ReverseMap();
+        }
+        internal void CreateMessageMap()
+        {
+            CreateMap<CreateMessageModel, Message>()
                 .ReverseMap();
         }
     }
